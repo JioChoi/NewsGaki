@@ -38,10 +38,14 @@ function writeContent(response) {
 	let content = document.getElementById('content');
 	let data = response.article;
 
+	let h4 = document.createElement('h4');
+	h4.innerText = "(기사 속 사건과 관련 없음)";
+
 	content.innerHTML = "";
 	content.appendChild(title);
 	content.appendChild(date);
 	content.appendChild(img);
+	content.appendChild(h4);
 
 	data += '\n';
 
