@@ -231,6 +231,8 @@ async function getNewTopics() {
 	} catch (e) {
 		console.log("Error in getNewTopics()");
 		console.log(e);
+		console.log("Retrying...");
+		await delay(30000);
 		await getNewTopics();
 	}
 }
@@ -378,6 +380,12 @@ async function gemini(prompt) {
 	} catch (e) {
 		console.log("Error in gemini()");
 		console.log(e);
+		console.log("Retrying...");
+		await delay(30000);
 		await gemini(prompt);
 	}
+}
+
+async function delay(ms) {
+	return new Promise(resolve => setTimeout(resolve, ms));
 }
