@@ -30,7 +30,7 @@ function writeContent(response) {
 	title.innerText = response.title;
 
 	let date = document.createElement('h3');
-	date.innerText = new Date(Number(response.date)).toLocaleString("JA-JP").replaceAll('/', '.');
+	date.innerText = getDateString(response.date);
 
 	let img = document.createElement('img');
 	img.src = response.img;
