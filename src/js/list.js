@@ -72,7 +72,7 @@ function createItem(title_text, date_text, id) {
 	item.appendChild(date);
 
 	item.addEventListener('click', () => {
-		location.href = `/article/${id}`;
+		location.href = `/article?id=${id}`;
 	});
 
 	return item;
