@@ -64,7 +64,12 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.get('/', (req, res) => {
-	res.sendFile(__dirname + '/src/index.html');
+	if (PORT == 7860) {
+		res.send("Server running on port 7860!");
+	}
+	else {
+		res.sendFile(__dirname + '/src/index.html');
+	}
 });
 
 app.get('/article/:id', (req, res) => {
