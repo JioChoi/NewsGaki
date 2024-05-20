@@ -23,7 +23,7 @@ async function updateList(start, size, emptyWhenUpdate = false) {
 	for(let item of data) {
 		let title = cleanTitle(item.title);
 		let date = item.date;
-		date = new Date(date).toLocaleString("JA-JP").replaceAll('/','.');
+		date = new Date(Number(date)).toLocaleString("JA-JP").replaceAll('/','.');
 		let id = item.id;
 
 		let article = createItem(title, date, id);
