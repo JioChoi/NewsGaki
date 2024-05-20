@@ -64,7 +64,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.get('/', (req, res) => {
-	if (PORT == 7860) {
+	if (port == 7860) {
 		res.send("Server running on port 7860!");
 	}
 	else {
