@@ -1,5 +1,3 @@
-// TODO:HIDE PROMPT!!
-
 const dotenv = require('dotenv');
 const axios = require('axios');
 const fs = require('fs');
@@ -72,7 +70,7 @@ app.get('/', (req, res) => {
 	}
 });
 
-app.get('/article/:id', (req, res) => {
+app.get('/article', (req, res) => {
 	res.sendFile(__dirname + '/src/article.html');
 });
 
@@ -105,9 +103,15 @@ app.post('/api/list', async (req, res) => {
 	res.send(response.rows);
 });
 
-app.listen(port, () => {
+app.listen(port, async () => {
 	console.log(`Server running on port ${port}`);
-	start();
+
+	if (process.argv[2] != "dev") {
+		start();
+	}
+	else {
+		console.log("Development mode enabled. Automation will not start.");
+	}
 });
 
 async function start() {
@@ -202,13 +206,29 @@ function getID(time) {
 	return Number(id).toString(16);
 }
 
+function removeOldTopics(min) {
+	let limit = getKoreanTime() - min * 60000;
+	for (let i = 0; i < news.length; i++) {
+		if (news[i].date < limit) {
+			news.splice(i, 1);
+		}
+	}
+}
+
 async function getNewTopics() {
 	try {
 		console.log("Getting all articles...");
 		let newsStr = await getAllNews();
 
+		if (newsStr == "") {
+			// Wait for 10 minutes
+			console.log("No news found. Retrying in 10 minutes...");
+			await delay(600000);
+			await getNewTopics();
+		}
+
 		console.log("Running Gemini...");
-		let prompt = `이 중에 화제가 될 만한 기사들을 말 해줘. 숫자만 한 줄로 말해줘. 같은 주제의 뉴스 기사는 제외해줘. 특정 인물이나 정당, 그룹에 관련된 기사도 제외해줘.\n${newsStr}`;
+		let prompt = `이 중에 화제가 될 만한 기사들을 말 해줘. 숫자만 한 줄로 말해줘. 같은 주제의 뉴스 기사는 겹치지 않게 꼭 제외해줘. 특정 인물이나 정당, 그룹에 관련된 기사도 제외해줘.\n${newsStr}`;
 		let response = await gemini(prompt);
 	
 		console.log("Processing Results...");
@@ -261,6 +281,12 @@ async function getAllNews() {
 
 	for (let id of ids) {
 		await getNews(id);
+	}
+
+	removeOldTopics(10);
+
+	if (news.length < 5) {
+		return "";
 	}
 
 	// randomize order
