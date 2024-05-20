@@ -1,5 +1,11 @@
 document.addEventListener('DOMContentLoaded', async () => {
-	let id = window.location.pathname.split('/')[2];
+	let id = new URLSearchParams(location.search).get('id');
+
+	if (!id || id.length != 10) {
+		location.href = '/';
+		return;
+	}
+
 	let response = await fetch(`${host}/api/article/${id}`, {
 		method: 'GET',
 		headers: {
