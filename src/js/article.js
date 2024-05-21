@@ -113,9 +113,12 @@ function writeContent(response) {
 	img.src = response.img;
 
 	let content = document.getElementById('content');
+	response.article = response.article.replaceAll('.', '♡');
 	response.article = response.article.replaceAll(' ♡', '♡');
+	response.article = response.article.replaceAll('♡ ', '♡');
+	response.article = response.article.replaceAll('♡♡', '♡');
+	response.article = response.article.replaceAll('♡♡♡', '♡');
 	response.article = response.article.replaceAll('!', '~');
-	response.article = response.article.replaceAll('.', '');
 
 	// Remove multiple spaces
 	response.article = response.article.replaceAll('    ', ' ');
