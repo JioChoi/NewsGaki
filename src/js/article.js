@@ -24,11 +24,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 	loadComments();
 
 	document.getElementById('like').addEventListener('click', async () => {
-		alert('추천했습니다.');
 		if (window.localStorage.getItem(id) == 'true') {
 			alert('이미 반응하셨습니다.')
 			return;
 		}
+		alert('추천했습니다.');
 
 		window.localStorage.setItem(id, 'true');
 
@@ -47,11 +47,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 	});
 
 	document.getElementById('dislike').addEventListener('click', async () => {
-		alert('비추천했습니다.');
 		if (window.localStorage.getItem(id) == 'true') {
 			alert('이미 반응하셨습니다.')
 			return;
 		}
+		alert('비추천했습니다.');
 		
 		window.localStorage.setItem(id, 'true');
 
