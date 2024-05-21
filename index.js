@@ -226,10 +226,19 @@ async function generateArticle(url) {
 	let article = await getNewsArticle(url);
 
 	console.log("Running Gemini...");
-	let prompt = `너는 이제부터 뉴스가키라는 메스가키 뉴스 기자가 될거야. "허접♡" 이라는 단어를 젤 좋아해서 많이 사용해. "♡" 를 말 끝에 붙여서 모욕적인 말을 해. 너는 고집스럽고 거만하며 충동적인 성격이야. 비꼬는 말투가 중요해. 너는 매도하는걸 좋아해. "ㅉㅉ"을 사용하지 마.\n\n이름이나 그룹, 정치적 정당은 절대 말하지 마. 사람 이름을 말 하지마. 한 문단에 세 문장 이상은 무조건 포함하고 세 문단 이상 적어줘. Markdown 을 사용하지 마. 길게 적어.\n\n뉴스 제목\n이미지 검색에 사용할 영어 이미지 키워드\n내용\n\n순으로 써줘.\n\n이건 메스가키가 하는 대사의 예시들이야.\n- 허접 식물♡ 할 줄 아는건 광합성 뿐♡\n- 사과해♡ 사과해♡\n- 쓰레기♡\n- 바보♡\n- 허접♡ 무슨 말을 하고 싶은거야?♡\n\n아래 뉴스기사 내용을 너가 전달할거야.${article}`;
+	let prompt = `너는 이제부터 뉴스가키라는 메스가키 뉴스 기자가 될거야. 말에 "허접♡" 를 붙이는 걸 좋아하고 "♡" 를 꼭 말 끝에 붙여. 반말을 써. 뉴스 기사의 형식대로 글을 써. 특정 인물의 이름은 절대 언급하지 마. 무조건 뉴스 내용을 비꼬고, 매도해. 매도해. 매도해. 매도해. 매도해. 비하해. 비하해.\n\nMarkdown 을 사용하지 마. 첫 줄은 제목이야. 한 문단에 세 문장 이상은 무조건 포함해. 무조건 세 문단 이상 써. 기사 내용을 꼭 포함해.\n\n이건 메스가키가 하는 대사의 예시들이야.\n- 사과해♡ 사과해♡\n- 이 쓰레기 자식♡\n- 개허접 눈물샘♡\n- 바보♡\n- 허접♡ 무슨 말을 하고 싶은거야?♡\n\n아래 뉴스기사를 참고해서 뉴스 기사를 써줘.${article}`;
 	let response = await gemini(prompt);
 
 	if (response == null) {
+		console.log("Gemini returned null. Skipping article.");
+		return;
+	}
+
+	prompt = `Give me a one line prompt for  image generation ai based on the news article below to generate a thumbnail for the news article.\n${article}`;
+	let img_prompt = await gemini(prompt);
+	img_prompt = img_prompt.split('\n')[0];
+
+	if (img_prompt == null) {
 		console.log("Gemini returned null. Skipping article.");
 		return;
 	}
@@ -242,15 +251,7 @@ async function generateArticle(url) {
 	title = title.replaceAll('*', '');
 	title = title.trim();
 
-	let imageKeyword = response[1];
-	imageKeyword = imageKeyword.replaceAll('#', '');
-	imageKeyword = imageKeyword.replaceAll('*', '');
-	imageKeyword = imageKeyword.split(':').slice(-1)[0];
-	imageKeyword = imageKeyword.trim();
-
-	let image = await getPhoto(imageKeyword);
-
-	response = response.slice(2);
+	response = response.slice(1);
 	let data = response.join('\n');
 	data = data.replaceAll('#', '');
 	data = data.replaceAll('*', '');
@@ -262,7 +263,7 @@ async function generateArticle(url) {
 	console.log("Querying DB...");
 
 	let query = "INSERT INTO news (id, date, title, article, img) VALUES ($1, $2, $3, $4, $5)";
-	await queryDB(query, [id, date, title, data, image]);
+	await queryDB(query, [id, date, title, data, img_prompt]);
 	console.log("Uploaded to DB!");
 }
 
@@ -456,7 +457,7 @@ async function gemini(prompt) {
 		const model = genAI.getGenerativeModel({ model: MODEL_NAME });
 
 		const generationConfig = {
-			temperature: 0.85,
+			temperature: 0.9,
 			topK: 64,
 			topP: 0.95,
 			maxOutputTokens: 8192,
