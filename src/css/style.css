@@ -57,6 +57,13 @@
 	color: #818181;
 }
 
+.article span {
+	display: inline;
+	font-size: 12px;
+	color: #ff438b;
+	margin-left: 5px;
+}
+
 .more {
 	display: flex;
 	justify-content: center;

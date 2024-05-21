@@ -104,6 +104,7 @@ async function loadComments() {
 function writeContent(response) {
 	let title = document.createElement('h1');
 	title.innerText = response.title;
+	document.title = response.title;
 
 	let date = document.createElement('h3');
 	date.innerText = getDateString(response.date);
@@ -112,7 +113,18 @@ function writeContent(response) {
 	img.src = response.img;
 
 	let content = document.getElementById('content');
+	response.article = response.article.replaceAll(' ♡', '♡');
+	response.article = response.article.replaceAll('!', '~');
+	response.article = response.article.replaceAll('.', '');
+
+	// Remove multiple spaces
+	response.article = response.article.replaceAll('    ', ' ');
+	response.article = response.article.replaceAll('   ', ' ');
+	response.article = response.article.replaceAll('  ', ' ');
+
 	let data = response.article;
+
+	console.log(response.article);
 
 	let h4 = document.createElement('h4');
 	h4.innerText = "(기사 속 사건과 관련 없음)";
@@ -159,7 +171,7 @@ function writeContent(response) {
 
 function heart(hearts) {
 	let ele = document.createElement('span');
-	ele.innerText = '♥️';
+	ele.innerText = '♥';
 	ele.classList.add('heart');
 	ele.classList.add("animate");
 

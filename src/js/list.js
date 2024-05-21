@@ -26,7 +26,7 @@ async function updateList(start, size, emptyWhenUpdate = false) {
 		date = getDateString(date);
 		let id = item.id;
 
-		let article = createItem(title, date, id);
+		let article = createItem(title, date, id, item.comment);
 		list.appendChild(article);
 	}
 
@@ -59,12 +59,13 @@ function createMore() {
 	return more;
 }
 
-function createItem(title_text, date_text, id) {
+function createItem(title_text, date_text, id, comment_num) {
 	let item = document.createElement('div');
 	item.classList.add('article');
 
 	let title = document.createElement('h2');
 	title.textContent = title_text;
+	title.innerHTML += `<span>[${comment_num}]</span>`;
 	item.appendChild(title);
 
 	let date = document.createElement('h3');
