@@ -156,6 +156,8 @@
 
 	aspect-ratio: 5/3;
 	object-fit: cover;
+
+	background-color: #f2f2f2;
 }
 
 .comments {

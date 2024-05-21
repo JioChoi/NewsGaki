@@ -109,18 +109,21 @@ function writeContent(response) {
 	let date = document.createElement('h3');
 	date.innerText = getDateString(response.date);
 
+	let h4 = document.createElement('h4');
+	h4.innerText = "(기사 속 사건과 관련 없음)";
+	
 	let img = document.createElement('img');
 	if (response.img.substring(0, 4) == 'http') {
 		img.src = response.img;
 	}
 	else {
 		img.src = `https://image.pollinations.ai/prompt/${response.img}`;
+		h4.innerText = "(AI가 생성한 이미지 입니다. 실제와 다를 수 있습니다.)";
 	}
 
 	let content = document.getElementById('content');
 	response.article = response.article.replaceAll('.', '♡');
 	response.article = response.article.replaceAll(' ♡', '♡');
-	response.article = response.article.replaceAll('♡ ', '♡');
 	response.article = response.article.replaceAll('♡♡', '♡');
 	response.article = response.article.replaceAll('♡♡♡', '♡');
 	response.article = response.article.replaceAll('!', '~');
@@ -131,11 +134,6 @@ function writeContent(response) {
 	response.article = response.article.replaceAll('  ', ' ');
 
 	let data = response.article;
-
-	console.log(response.article);
-
-	let h4 = document.createElement('h4');
-	h4.innerText = "(기사 속 사건과 관련 없음)";
 
 	let h5 = document.createElement('h5');
 	h5.innerHTML = "해당 기사는 AI 기자 <strong>뉴스가키</strong>가 작성하였습니다.";
