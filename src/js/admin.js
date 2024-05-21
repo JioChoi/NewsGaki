@@ -49,4 +49,6 @@ async function deleteArticle() {
 		body: JSON.stringify({ aid: aid, id:id, pw:pw }),
 		headers: { 'Content-Type': 'application/json' }
 	});
+
+	alert("Deleted?");
 }
