@@ -128,7 +128,8 @@ function writeContent(response) {
 	response.article = response.article.replaceAll('  ', ' ');
 	
 	response.article = response.article.replaceAll('!', '♡');
-	response.article = response.article.replaceAll('.', '♡');
+	response.article = response.article.replaceAll('. ', '♡ ');
+	response.article = response.article.replaceAll('.♡', '♡');
 	response.article = response.article.replaceAll(' ♡', '♡');
 	response.article = response.article.replaceAll('♡♡', '♡');
 	response.article = response.article.replaceAll('♡♡♡', '♡');
