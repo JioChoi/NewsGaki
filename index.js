@@ -8,9 +8,9 @@ const {
 } = require("@google/generative-ai");
 const { JSDOM } = require('jsdom');
 const pg = require('pg');
-const { get } = require('http');
 const express = require('express');
 const crypto = require('crypto');
+
 
 dotenv.config();
 
@@ -159,7 +159,7 @@ app.post('/api/comment', async (req, res) => {
 		return;
 	}
 
-	let date = getKoreanTime();
+	let date = await getKoreanTime();
 
 	let query = "INSERT INTO comment (id, name, comment, date) VALUES ($1, $2, $3, $4)";
 	await queryDB(query, [id, name, comment, date]);
@@ -287,7 +287,7 @@ async function generateArticle(url) {
 	data = data.replaceAll('*', '');
 	data = data.trim();
 
-	let date = getKoreanTime();
+	let date = await getKoreanTime();
 	let id = getID(date);
 
 	console.log("Querying DB...");
@@ -297,11 +297,15 @@ async function generateArticle(url) {
 	console.log("Uploaded to DB!");
 }
 
-function getKoreanTime() {
-	const curr = new Date();
-	const utc = curr.getTime() + (curr.getTimezoneOffset() * 60 * 1000);
-	const KR_TIME_DIFF = 9 * 60 * 60 * 1000;
-	return utc + (KR_TIME_DIFF)
+async function getKoreanTime() {
+	const config = {
+		method: 'get',
+		url: "https://worldtimeapi.org/api/timezone/Asia/Seoul"
+	};
+
+	let response = await axios(config);
+	let time = Number(response.data.unixtime);
+	return time * 1000;
 }
 
 function getID(time) {
@@ -324,11 +328,12 @@ function getID(time) {
 	return Number(id).toString(16);
 }
 
-function removeOldTopics(min) {
-	let limit = getKoreanTime() - min * 60000;
+async function removeOldTopics(min) {
+	let limit = await getKoreanTime() - min * 60000;
 	for (let i = 0; i < news.length; i++) {
 		if (news[i].date < limit) {
 			news.splice(i, 1);
+			i--;
 		}
 	}
 }
@@ -405,7 +410,7 @@ async function getAllNews() {
 		await getNews(id);
 	}
 
-	removeOldTopics(10);
+	await removeOldTopics(10);
 
 	if (news.length < 5) {
 		return "";
