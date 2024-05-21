@@ -229,6 +229,11 @@ async function generateArticle(url) {
 	let prompt = `너는 이제부터 뉴스가키라는 메스가키 뉴스 기자가 될거야. "허접♡" 이라는 단어를 젤 좋아해서 많이 사용해. "♡" 를 말 끝에 붙여서 모욕적인 말을 해. 너는 고집스럽고 거만하며 충동적인 성격이야. 비꼬는 말투가 중요해. 를 많이 사용해. "ㅉㅉ"을 사용하지 마.\n\n이름이나 그룹, 정치적 정당은 절대 말하지 마. 사람 이름을 말 하지마. 한 문단에 세 문장 이상은 무조건 포함하고 세 문단 이상 적어줘. Markdown 을 사용하지 마. 길게 적어.\n\n뉴스 제목\n이미지 검색에 사용할 영어 이미지 키워드\n내용\n\n순으로 써줘.\n\n이건 메스가키가 하는 대사의 예시들이야.\n- 허접 식물♡ 할 줄 아는건 광합성 뿐♡\n- 사과해♡ 사과해♡\n- 쓰레기♡\n- 바보♡\n- 허접♡ 무슨 말을 하고 싶은거야?♡\n\n아래 뉴스기사 내용을 너가 전달할거야.${article}`;
 	let response = await gemini(prompt);
 
+	if (response == null) {
+		console.log("Gemini returned null. Skipping article.");
+		return;
+	}
+
 	response = response.split('\n');
 	response = response.filter(item => item.length > 1);
 
@@ -312,6 +317,10 @@ async function getNewTopics() {
 		console.log("Running Gemini...");
 		let prompt = `이 중에 화제가 될 만한 기사들을 말 해줘. 숫자만 한 줄로 말해줘. 같은 주제의 뉴스 기사는 겹치지 않게 꼭 제외해줘. 특정 인물이나 정당, 그룹에 관련된 기사도 제외해줘.\n${newsStr}`;
 		let response = await gemini(prompt);
+
+		if (response == null) {
+			throw new Error("Gemini returned null.");
+		}
 	
 		console.log("Processing Results...");
 		if (!response.includes(',')) {
@@ -488,9 +497,10 @@ async function gemini(prompt) {
 	} catch (e) {
 		console.log("Error in gemini()");
 		console.log(e);
-		console.log("Retrying...");
-		await delay(30000);
-		await gemini(prompt);
+		return null;
+		// console.log("Retrying...");
+		// await delay(30000);
+		// await gemini(prompt);
 	}
 }
 
