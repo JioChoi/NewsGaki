@@ -233,7 +233,7 @@ async function start() {
 			console.log("Getting new topics...");
 			await getNewTopics();
 		}
-	}, 180000);
+	}, 60000 * 3);
 }
 
 function setIntervalAndExecute(fn, t) {
@@ -349,6 +349,7 @@ async function getNewTopics() {
 			console.log("No news found. Retrying in 10 minutes...");
 			await delay(600000);
 			await getNewTopics();
+			return;
 		}
 
 		console.log("Running Gemini...");
