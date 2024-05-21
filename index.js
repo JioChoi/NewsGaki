@@ -168,7 +168,7 @@ app.get('/api/comments/:id', async (req, res) => {
 		return;
 	}
 
-	let query = "SELECT * FROM comment WHERE id = $1 ORDER BY date DESC";
+	let query = "SELECT * FROM comment WHERE id = $1 ORDER BY date ASC";
 	let response = await queryDB(query, [id]);
 	res.send(response.rows);
 });
