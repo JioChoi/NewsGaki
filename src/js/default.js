@@ -7,15 +7,16 @@ document.addEventListener('DOMContentLoaded', async () => {
 	});
 });
 
+
 function getDateString(time) {
 	let date = new Date(Number(time));
 
-	let year = date.getUTCFullYear();
-	let month = date.getUTCMonth() + 1;
-	let day = date.getUTCDate();
-	let hours = date.getUTCHours();
-	let minutes = date.getUTCMinutes();
-	let seconds = date.getUTCSeconds();
+	let year = date.getFullYear();
+	let month = date.getMonth() + 1;
+	let day = date.getDate();
+	let hours = date.getHours();
+	let minutes = date.getMinutes();
+	let seconds = date.getSeconds();
 
 	month = ("0" + month).slice(-2);
 	day = ("0" + day).slice(-2);
