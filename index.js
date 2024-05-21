@@ -20,7 +20,7 @@ const port = process.env.PORT || 80;
 const MODEL_NAME = "gemini-1.5-flash-latest";
 const API_KEY = process.env.GEMINI_API_KEY;
 
-let ids = [73, 327, 310, 11, 45, 190, 15, 33, 38, 200, 8, 17, 49, 23, 396, 318, 98, 60, 317]
+let ids = [8, 38, 33, 17, 49, 327, 23, 318]
 let news = [];
 let topics = [];
 
