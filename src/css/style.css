@@ -273,6 +273,7 @@
 	font-size: 14px;
 
 	border-radius: 50px;
+	background-color: #f2f2f2;
 }
 .editor button:hover {
 	cursor: pointer;
