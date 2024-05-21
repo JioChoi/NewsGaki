@@ -197,7 +197,7 @@ async function start() {
 			console.log("Getting new topics...");
 			await getNewTopics();
 		}
-	}, 270000);
+	}, 180000);
 }
 
 function setIntervalAndExecute(fn, t) {
@@ -477,7 +477,7 @@ async function gemini(prompt) {
 		console.log("Error in gemini()");
 		console.log(e);
 		console.log("Retrying...");
-		await delay(120000);
+		await delay(30000);
 		await gemini(prompt);
 	}
 }
