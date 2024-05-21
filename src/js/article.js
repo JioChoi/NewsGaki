@@ -110,7 +110,12 @@ function writeContent(response) {
 	date.innerText = getDateString(response.date);
 
 	let img = document.createElement('img');
-	img.src = response.img;
+	if (response.img.substring(0, 4) == 'http') {
+		img.src = response.img;
+	}
+	else {
+		img.src = `https://image.pollinations.ai/prompt/${response.img}`;
+	}
 
 	let content = document.getElementById('content');
 	response.article = response.article.replaceAll('.', '♡');
