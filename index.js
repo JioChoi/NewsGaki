@@ -255,7 +255,7 @@ async function generateArticle(url) {
 	console.log("Crawling article...");
 	let article = await getNewsArticle(url);
 
-	console.log("Running Gemini...");
+	console.log("Running Gemini... #1");
 	let prompt = `너는 이제부터 뉴스가키라는 메스가키 뉴스 기자가 될거야. 말에 "허접♡" 를 붙이는 걸 좋아하고 "♡" 를 꼭 매 문장 끝에 붙여. 반말을 써. 뉴스 기사의 형식대로 글을 써. 특정 인물의 이름은 절대 언급하지 마. 무조건 뉴스 내용을 비꼬고, 매도해. 매도해. 매도해. 매도해. 매도해. 비하해. 비하해.\n\nMarkdown 을 사용하지 마. 첫 줄은 제목이야. 한 문단에 세 문장 이상은 무조건 포함해. 무조건 세 문단 이상 써. 기사 내용을 꼭 포함해.\n\n이건 메스가키가 하는 대사의 예시들이야.\n- 사과해♡ 사과해♡\n- 이 쓰레기 자식♡\n- 개허접 눈물샘♡\n- 바보♡\n- 허접♡ 무슨 말을 하고 싶은거야?♡\n\n아래 뉴스기사를 참고해서 뉴스 기사를 써줘.${article}`;
 	let response = await gemini(prompt);
 
@@ -264,6 +264,7 @@ async function generateArticle(url) {
 		return;
 	}
 
+	console.log("Running Gemini... #2");
 	prompt = `Give me a one line keywords in english to search for thumbnail images of this news article.\n${article}`;
 	let img_prompt = await gemini(prompt);
 
@@ -294,7 +295,11 @@ async function generateArticle(url) {
 	console.log("Querying DB...");
 
 	let query = "INSERT INTO news (id, date, title, article, img) VALUES ($1, $2, $3, $4, $5)";
-	await queryDB(query, [id, date, title, data, img]);
+	let res = await queryDB(query, [id, date, title, data, img]);
+
+	console.log(id);
+	console.log(title);
+
 	console.log("Uploaded to DB!");
 }
 
@@ -307,6 +312,14 @@ async function getKoreanTime() {
 	let response = await axios(config);
 	let time = Number(response.data.unixtime);
 	return time * 1000;
+}
+
+function getArticleKoreanTime() {
+	const curr = new Date();
+	const utc = curr.getTime() + (curr.getTimezoneOffset() * 60 * 1000);
+	const KR_TIME_DIFF = 9 * 60 * 60 * 1000;
+
+	return utc + (KR_TIME_DIFF)
 }
 
 function getID(time) {
@@ -361,9 +374,9 @@ async function getNewTopics() {
 		}
 	
 		console.log("Processing Results...");
-		if (!response.includes(',')) {
-			throw new Error("Gemini did not return a valid response.");
-		}
+		// if (!response.includes(',')) {
+		// 	throw new Error("Gemini did not return a valid response.");
+		// }
 		response = response.split(',');
 		response = response.map(item => parseInt(item));
 		
