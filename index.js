@@ -156,7 +156,7 @@ app.post('/api/comment', async (req, res) => {
 
 	let date = getKoreanTime();
 
-	let query = "INSERT INTO comments (id, name, comment, date) VALUES ($1, $2, $3, $4)";
+	let query = "INSERT INTO comment (id, name, comment, date) VALUES ($1, $2, $3, $4)";
 	await queryDB(query, [id, name, comment, date]);
 	res.send("Comment added!");
 });
@@ -168,7 +168,7 @@ app.get('/api/comments/:id', async (req, res) => {
 		return;
 	}
 
-	let query = "SELECT * FROM comments WHERE id = $1 ORDER BY date DESC";
+	let query = "SELECT * FROM comment WHERE id = $1 ORDER BY date DESC";
 	let response = await queryDB(query, [id]);
 	res.send(response.rows);
 });

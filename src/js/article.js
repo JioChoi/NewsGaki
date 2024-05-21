@@ -91,8 +91,10 @@ async function loadComments() {
 	});
 
 	response = await response.json();
-	document.getElementById('comment_num').innerText = response.length;
+	document.getElementById('comment_num').innerText = response.length + "개의 댓글";
 
+	document.getElementById("comments").innerHTML = "";
+	
 	response.forEach((comment) => {
 		addComment(comment.name, comment.comment);
 	});
@@ -195,7 +197,7 @@ function addComment(name, value) {
 	document.getElementById("comments").appendChild(div);
 }
 
-function submit() {
+async function submit() {
 	let comment = document.getElementById('edit').value.trim();
 	if (comment.length < 1) {
 		alert('내용을 입력해주세요.');
@@ -203,7 +205,19 @@ function submit() {
 	}
 
 	alert('댓글을 작성했습니다.');
-	document.getElementById('edit').value = '';
 
-	addComment("익명", comment);
+	await fetch(`${host}/api/comment`, {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify({
+			id: id,
+			comment: comment
+		})
+	});
+
+	loadComments();
+
+	document.getElementById('edit').value = '';
 }
