@@ -75,6 +75,10 @@ app.get('/article', (req, res) => {
 	res.sendFile(__dirname + '/src/article.html');
 });
 
+app.get('/admin', (req, res) => {
+	res.sendFile(__dirname + '/src/admin.html');
+});
+
 app.get('/api/article/:id', async (req, res) => {
 	let id = req.params.id;
 	if (id == undefined || id.length != 10) {
@@ -177,6 +181,32 @@ app.get('/api/comments/:id', async (req, res) => {
 	let query = "SELECT * FROM comment WHERE id = $1 ORDER BY date ASC";
 	let response = await queryDB(query, [id]);
 	res.send(response.rows);
+});
+
+app.post('/api/delete', async (req, res) => {
+	let id = req.body.id;
+	let pw = req.body.pw;
+
+	if (id == undefined || pw == undefined) {
+		res.status(400).send("Bad Request");
+		return;
+	}
+
+	if (id != process.env.ADMIN_ID || pw != process.env.ADMIN_PW) {
+		res.status(401).send("Unauthorized");
+		return;
+	}
+
+	let aid = req.body.aid;
+	if (aid == undefined || aid.length != 10) {
+		res.status(400).send("Bad Request");
+		return;
+	}
+
+	let query = "DELETE FROM news WHERE id = $1";
+	await queryDB(query, [aid]);
+
+	res.send("Deleted!");
 });
 
 app.listen(port, async () => {
@@ -451,7 +481,11 @@ async function getPhoto(keyword) {
 	return photo;
 }
 
-async function gemini(prompt) {
+async function gemini(prompt, retry = 0) {
+	if (retry > 3) {
+		return null;
+	}
+
 	try {
 		const genAI = new GoogleGenerativeAI(API_KEY);
 		const model = genAI.getGenerativeModel({ model: MODEL_NAME });
@@ -498,10 +532,9 @@ async function gemini(prompt) {
 	} catch (e) {
 		console.log("Error in gemini()");
 		console.log(e);
-		return null;
-		// console.log("Retrying...");
-		// await delay(30000);
-		// await gemini(prompt);
+		console.log("Retrying...");
+		await delay(5000);
+		return await gemini(prompt, retry + 1);
 	}
 }
 

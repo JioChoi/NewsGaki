@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>뿌슝빠슝뿌슝 뉴스가키 관리자 페이지</title>
+	<style>
+		body {
+			margin: 0;
+			padding: 0;
+		}
+
+		.contents {
+			margin: 10px;
+		}
+
+		#tool {
+			margin-top: 30px;
+		}
+	</style>
+	<link rel="stylesheet" href="css/style.css">
+
+	<script src="https://cdn.jsdelivr.net/npm/js-sha256@0.11.0/src/sha256.min.js"></script>
+	<script src="js/default.js"></script>
+	<script src="js/admin.js"></script>
+</head>
+<body>
+	<div class="header">
+		<img id="logo" src="assets/logo-s.png">
+	</div>
+
+	<div class="contents">
+		<h1>관리자 페이지에 오신걸 환영합니다!!</h1>
+		<h3>혹시 이 페이지가 무슨 페이지인지 모른다면 나가주세요.</h3>
+
+		<h2>로그인 세번 실패시 ip 차단및 로그 됩니다.</h2>
+		<input type="text" id="id" placeholder="아이디">
+		<input type="password" id="pw" placeholder="비밀번호">
+		<button onclick="login()">로그인</button>
+
+		<div id="tool">
+			<input type="text" id="aid" placeholder="게시글 아이디">
+			<button onclick="deleteArticle()">게시글 삭제</button>
+			<div id="posts">
+
+			</div>
+		</div>
+	</div>
+</body>
+</html>
