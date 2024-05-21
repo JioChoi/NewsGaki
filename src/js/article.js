@@ -122,16 +122,16 @@ function writeContent(response) {
 	}
 
 	let content = document.getElementById('content');
+	// Remove multiple spaces
+	response.article = response.article.replaceAll('    ', ' ');
+	response.article = response.article.replaceAll('   ', ' ');
+	response.article = response.article.replaceAll('  ', ' ');
+	
 	response.article = response.article.replaceAll('.', '♡');
 	response.article = response.article.replaceAll(' ♡', '♡');
 	response.article = response.article.replaceAll('♡♡', '♡');
 	response.article = response.article.replaceAll('♡♡♡', '♡');
 	response.article = response.article.replaceAll('!', '~');
-
-	// Remove multiple spaces
-	response.article = response.article.replaceAll('    ', ' ');
-	response.article = response.article.replaceAll('   ', ' ');
-	response.article = response.article.replaceAll('  ', ' ');
 
 	let data = response.article;
 

@@ -158,6 +158,9 @@
 	object-fit: cover;
 
 	background-color: #f2f2f2;
+	background-image: url('/assets/fallback.png');
+	background-size: cover;
+	background-position: center;
 }
 
 .comments {
