@@ -3,7 +3,8 @@
    License: none (public domain)
 */
 
-@import url("https://cdn.jsdelivr.net/npm/font-kopub@1.0");
+@import "//cdn.jsdelivr.net/npm/font-applesdgothicneo@1.0/all.min.css";
+
 /*
 	300
 	400
@@ -22,15 +23,23 @@ table, caption, tbody, tfoot, thead, tr, th, td,
 article, aside, canvas, details, embed, 
 figure, figcaption, footer, header, hgroup, 
 menu, nav, output, ruby, section, summary,
-time, mark, audio, video {
+time, mark, audio, video, textarea, button {
 	margin: 0;
 	padding: 0;
 	border: 0;
 	font-size: 100%;
-	font-family: 'KoPub Dotum', sans-serif;
+	font-family: "Apple Sandoll Gothic Neo";
+	/* font-family: 'KoPub Dotum', sans-serif; */
+	/* font-family: -apple-system, BlinkMacSystemFont, "NanumBarunGothicOTF", system-ui, sans-serif; */
 	font-weight: 400;
 	vertical-align: baseline;
 }
+
+h1, h2, h3, h4, h5, h6, p, span {
+	white-space: break-spaces;
+	word-break: keep-all;
+}
+
 /* HTML5 display-role reset for older browsers */
 article, aside, details, figcaption, figure, 
 footer, header, hgroup, menu, nav, section {

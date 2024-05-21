@@ -10,6 +10,7 @@ const { JSDOM } = require('jsdom');
 const pg = require('pg');
 const { get } = require('http');
 const express = require('express');
+const crypto = require('crypto');
 
 dotenv.config();
 
@@ -134,6 +135,44 @@ app.post('/api/react', async (req, res) => {
 	res.status(400).send("Bad Request");
 });
 
+app.post('/api/comment', async (req, res) => {
+	let id = req.body.id;
+	let comment = req.body.comment;
+
+	let ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+	let name = crypto.createHash('md5').update(ip).digest('hex');
+	name = name.slice(0, 8);
+
+	if (id == undefined || id.length != 10 || comment == undefined || comment.length < 1) {
+		res.status(400).send("Bad Request");
+		return;
+	}
+
+	comment = comment.trim();
+	if (comment.length > 1000 || comment.length < 1) {
+		res.status(400).send("Bad Request");
+		return;
+	}
+
+	let date = getKoreanTime();
+
+	let query = "INSERT INTO comments (id, name, comment, date) VALUES ($1, $2, $3, $4)";
+	await queryDB(query, [id, name, comment, date]);
+	res.send("Comment added!");
+});
+
+app.get('/api/comments/:id', async (req, res) => {
+	let id = req.params.id;
+	if (id == undefined || id.length != 10) {
+		res.status(400).send("Bad Request");
+		return;
+	}
+
+	let query = "SELECT * FROM comments WHERE id = $1 ORDER BY date DESC";
+	let response = await queryDB(query, [id]);
+	res.send(response.rows);
+});
+
 app.listen(port, async () => {
 	console.log(`Server running on port ${port}`);
 
@@ -181,7 +220,7 @@ async function generateArticle(url) {
 	let article = await getNewsArticle(url);
 
 	console.log("Running Gemini...");
-	let prompt = `너는 이제부터 뉴스가키라는 메스가키 뉴스 기자가 될거야. 말에 "허접♡" 를 붙이는 걸 좋아하고 "♡" 를 꼭 말 끝에 붙여. 비꼬는 말투가 중요해. 반말을 써. 법에 위배되거나 고소당할만한 말은 하지마. 뉴스 기사의 형식대로 글을 써. 특정 인물의 이름은 절대 언급하지 마. Markdown 을 사용하지 마. 첫 문장은 제목이야. 두번째 문장은 이미지 검색에 사용할 이미지 키워드를 영어로 써줘 단 이 부분에는 말 끝에 하트를 안 붙여도 돼. 한 문단에 세 문장 이상은 무조건 포함해. 무조건 세 문단 이상 써. 기사 내용을 꼭 포함해. \n이건 메스가키가 하는 대사의 예시들이야.\n- 허접 식물♡ 할 줄 아는건 광합성 뿐♡\n- 사과해♡ 사과해♡\n- 쓰레기♡\n- 바보♡\n- 허접♡ 무슨 말을 하고 싶은거야?♡\n아래 뉴스기사를 참고해서 뉴스 기사를 써줘.${article}`;
+	let prompt = `너는 이제부터 뉴스가키라는 메스가키 뉴스 기자가 될거야. 말에 "허접♡" 를 붙이는 걸 좋아하고 "♡" 를 꼭 말 끝에 붙여. 비꼬는 말투가 중요해. 반말을 써. 법에 위배되거나 고소당할만한 말은 하지마. 뉴스 기사의 형식대로 글을 써. 특정 인물의 이름은 절대 언급하지 마. Markdown 을 사용하지 마. 첫 줄은 제목이야. 두번째 줄은 이미지 검색에 사용할 이미지 키워드를 영어로 써줘 단 이 부분에는 말 끝에 하트를 안 붙여도 돼. 한 문단에 세 문장 이상은 무조건 포함해. 무조건 세 문단 이상 써. 기사 내용을 꼭 포함해. \n이건 메스가키가 하는 대사의 예시들이야.\n- 허접 식물♡ 할 줄 아는건 광합성 뿐♡\n- 사과해♡ 사과해♡\n- 쓰레기♡\n- 바보♡\n- 허접♡ 무슨 말을 하고 싶은거야?♡\n아래 뉴스기사를 참고해서 뉴스 기사를 써줘.${article}`;
 	let response = await gemini(prompt);
 
 	response = response.split('\n');

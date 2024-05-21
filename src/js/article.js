@@ -21,6 +21,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 	response = await response.json();
 	writeContent(response);
+	loadComments();
 
 	document.getElementById('like').addEventListener('click', async () => {
 		alert('추천했습니다.');
@@ -67,6 +68,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 		response = await response.json();
 		document.getElementById('dislike_count').innerText = response.dislikes;
 	});
+
+	document.getElementById('edit').addEventListener('input', () => {
+		document.getElementById('edit').style.height = 'auto';
+		document.getElementById('edit').style.height = document.getElementById('edit').scrollHeight - 20 + 'px';
+	});
 });
 
 /*
@@ -75,6 +81,23 @@ document.addEventListener('DOMContentLoaded', async () => {
 <img id="img" src="">
 <h4>(기사 속 사건과 관련 없음)</h4>
 */
+
+async function loadComments() {
+	let response = await fetch(`${host}/api/comments/${id}`, {
+		method: 'GET',
+		headers: {
+			'Content-Type': 'application/json'
+		}
+	});
+
+	response = await response.json();
+	document.getElementById('comment_num').innerText = response.length;
+
+	response.forEach((comment) => {
+		addComment(comment.name, comment.comment);
+	});
+
+}
 
 function writeContent(response) {
 	let title = document.createElement('h1');
@@ -154,4 +177,33 @@ function heart(hearts) {
 	}, 1000);
 
 	document.body.prepend(ele);
+}
+
+function addComment(name, value) {
+	let div = document.createElement('div');
+	div.classList.add('item');
+
+	let h3 = document.createElement('h3');
+	h3.innerText = name;
+
+	let p = document.createElement('p');
+	p.innerText = value;
+
+	div.appendChild(h3);
+	div.appendChild(p);
+	
+	document.getElementById("comments").appendChild(div);
+}
+
+function submit() {
+	let comment = document.getElementById('edit').value.trim();
+	if (comment.length < 1) {
+		alert('내용을 입력해주세요.');
+		return;
+	}
+
+	alert('댓글을 작성했습니다.');
+	document.getElementById('edit').value = '';
+
+	addComment("익명", comment);
 }
