@@ -264,14 +264,15 @@ async function generateArticle(url) {
 		return;
 	}
 
-	prompt = `Give me a one line prompt for  image generation ai based on the news article below to generate a thumbnail for the news article.\n${article}`;
+	prompt = `Give me a one line keywords in english to search for thumbnail images of this news article.\n${article}`;
 	let img_prompt = await gemini(prompt);
-	img_prompt = img_prompt.split('\n')[0];
 
 	if (img_prompt == null) {
 		console.log("Gemini returned null. Skipping article.");
 		return;
 	}
+
+	let img = await getPhoto(img_prompt);
 
 	response = response.split('\n');
 	response = response.filter(item => item.length > 1);
@@ -293,7 +294,7 @@ async function generateArticle(url) {
 	console.log("Querying DB...");
 
 	let query = "INSERT INTO news (id, date, title, article, img) VALUES ($1, $2, $3, $4, $5)";
-	await queryDB(query, [id, date, title, data, img_prompt]);
+	await queryDB(query, [id, date, title, data, img]);
 	console.log("Uploaded to DB!");
 }
 
