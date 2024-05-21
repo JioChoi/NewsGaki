@@ -228,16 +228,22 @@ async function generateArticle(url) {
 
 	let title = response[0];
 	title = title.replaceAll('#', '');
+	title = title.replaceAll('*', '');
 	title = title.trim();
 
 	let imageKeyword = response[1];
 	imageKeyword = imageKeyword.replaceAll('#', '');
+	imageKeyword = imageKeyword.replaceAll('*', '');
+	imageKeyword = imageKeyword.split(':').slice(-1)[0];
 	imageKeyword = imageKeyword.trim();
 
 	let image = await getPhoto(imageKeyword);
 
 	response = response.slice(2);
 	let data = response.join('\n');
+	data = data.replaceAll('#', '');
+	data = data.replaceAll('*', '');
+	data = data.trim();
 
 	let date = getKoreanTime();
 	let id = getID(date);
