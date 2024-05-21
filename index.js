@@ -316,7 +316,7 @@ async function getNewTopics() {
 		}
 
 		console.log("Running Gemini...");
-		let prompt = `이 중에 화제가 될 만한 기사들을 말 해줘. 숫자만 한 줄로 말해줘. 같은 주제의 뉴스 기사는 겹치지 않게 꼭 제외해줘. 특정 인물이나 정당, 그룹에 관련된 기사도 제외해줘.\n${newsStr}`;
+		let prompt = `이 중에 화제가 될 만한 기사들을 말 해줘. 숫자만 한 줄로 말해줘. 같은 주제의 뉴스 기사는 겹치지 않게 꼭 제외해줘. 특정 인물이나 정당, 그룹에 관련된 기사도 제외해줘. 정치와 관련된 기사는 고르지 마.\n${newsStr}`;
 		let response = await gemini(prompt);
 
 		if (response == null) {
