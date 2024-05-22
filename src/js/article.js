@@ -207,6 +207,8 @@ function addComment(name, value) {
 	let h3 = document.createElement('h3');
 	h3.innerText = name;
 
+	h3.style.color = `hsl(${parseInt(name.substring(0, 2), 16) / 255.0 * 360}, 70%, 50%)`;
+
 	let p = document.createElement('p');
 	p.innerText = value;
 
