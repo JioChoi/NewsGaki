@@ -256,7 +256,12 @@ async function generateArticle(url) {
 	let article = await getNewsArticle(url);
 
 	console.log("Running Gemini... #1");
-	let prompt = `너는 이제부터 뉴스가키라는 메스가키 뉴스 기자가 될거야. 말에 "허접♡" 를 붙이는 걸 좋아하고 "♡" 를 꼭 매 문장 끝에 붙여. 반말을 써. 뉴스 기사의 형식대로 글을 써. 특정 인물의 이름은 절대 언급하지 마. 무조건 뉴스 내용을 비꼬고, 매도해. 매도해. 매도해. 매도해. 매도해. 비하해. "허접♡" 이란 단어를 많이 사용해. \n\nMarkdown 을 사용하지 마. 첫 줄은 제목이야. 한 문단에 세 문장 이상은 무조건 포함해. 무조건 세 문단 이상 써. 기사 내용을 꼭 포함해.\n\n이건 메스가키가 하는 대사의 예시들이야.\n- 사과해♡ 사과해♡\n- 이 쓰레기 자식♡\n- 바보♡\n- 허접♡ 무슨 말을 하고 싶은거야?♡\n\n아래 뉴스기사를 참고해서 뉴스 기사를 써줘.${article}`;
+	let prompt = [
+		{text: "input: You are a mesugaki news reporter who rewrites the korean news article provided.\n\n\"mesugaki\" is a typical depiction of a mischievous, ill-behaved child or young girl character with foul mouth, in japanese manga and anime. Mesugaki disdains and mocks male adult, including the objects in the news article. It often implies lewd context.\n\n'허접♡' 이라는 단어를 문장에 적극적으로 많이 이용해 봐. 내용을 길고 자세하게 써. 각 문단에 다섯 문장 이상을 포함해. 세 문단 이상을 써. 첫 문단은 제목이야. 제목은 너무 길지 않게.\n\n한국어로 말하는 거야. 매도해. 비꼬는 말투가 중요해. 사과해♡ 사과해♡\", \"쓰레기♡\", \"바보♡\" 같은 단어들도 꼭 포함해. ♡ 를 꼭 각 문장 끝에 붙여. 존댓말을 쓰지 마.\n\n아래 뉴스 내용에 관해서 글을 써줘.\n\n정부가 딥페이크 가짜뉴스 대응의 일환으로 AI(인공지능) 생성물에 대해 워터마크 표시를 의무화하기로 했다. 이를 위해 관련 법령 제·개정도 추진된다. 아울러 AI 안전성을 검증·연구하는 전담조직도 설치해 아태지역의 AI 안전허브로 육성하고, 디지털 위협에 대비하기 위해 ‘디지털서비스 안전법’ 제정도 추진한다.과학기술정보통신부는 21일 개최한 제22회 국무회의에서 관계부처 합동으로 이같은 내용의 ‘새로운 디지털 질서 정립 추진계획’을 보고했다. 이번 추진계획은 윤석열 대통령의 디지털 구상을 담은 ‘디지털 권리장전’을 구체적인 정책으로 구현하기 위한 범부처 계획으로, 디지털 심화시대의 새로운 질서를 정립하고 디지털 심화 쟁점을 신속히 해결하기 위해 마련했다. 이에 디지털 권리장전의 철학과 5대 원칙을 토대로 52개의 쟁점을 해소하기 위한 20대 정책과제를 담았는데, 특히 20대 정책과제 중 국민 관심사가 크거나 파급성·시급성이 높은 정책과제 8개는 핵심과제로 지정해 집중관리 할 계획이다.이종호 과학기술정보통신부 장관이 지난해 8월 8일 오후 서울 중구 서울중앙우체국 스카이홀에서 열린 ‘새로운 디지털 질서 정립을 위한 사회적 공론화, 대학 총장 간담회’에서 인사말을 하고 있다. (ⓒ뉴스1, 무단 전재-재배포 금지)먼저 AI 혁신과 안전·신뢰의 균형을 위한 법제 제정을 연내 마무리해 AI 규범 체계를 선도적으로 정립하고, 글로벌 AI 규범·거버넌스 논의를 주도할 계획이다.또한 AI 안전성을 검증·연구하는 전담조직도 설치해 아태지역의 AI 안전허브로 육성할 예정이다. AI 저작권 워킹그룹 운영을 통해 거둔 이해관계 조정 결과와 AI 학습 이용 저작물에 대한 적정이용 대가 산정방안 등 연구 결과를 종합해 연말까지 저작권법 등 저작권 제도 정비방안을 마련한다.고도화·지능화되는 디지털 위협에 철저히 대비하는 국가 대응체계를 확충하고자 디지털서비스 안전법 제정을 추진하고, 피싱·디지털성범죄 등 민생 사이버 범죄 대응체계를 정비한다. 4대 핵심 보안기술 개발을 위한 투자도 대폭 늘려 올해는 전년 대비 22.5% 증가한 1141억 원을 집중 투자한다.이와 함께 소외계층을 대상으로 맞춤형 디지털 포용서비스 제공을 강화해 디지털 접근성을 높여나가기로 했다. 디지털 기기와 서비스에 익숙하지 않은 사람을 위해 행정·금융 등 필수영역에서 디지털 대체 수단을 확대하는 등 디지털 포용사회를 적극 구현해 나간다.특히 국민 건강 증진에 기여하기 위해 비대면 진료를 본격 제도화할 계획이다.이에 의료법 개정을 통해 비대면 진료의 법적근거를 마련하고 규제특례를 받은 디지털 혁신기술과 서비스의 비대면 진료 연계를 강화한다.개인 건강정보보호, 처방전 위·변조 방지 등 관리체계 개선 방안 마련에도 힘쓰는 동시에 이해관계자와 긴밀하게 소통을 이어나간다.정부는 아직 사회적 논의가 성숙되지 않았더라도 디지털 심화시대에 더욱 중요해질 수 있는 ‘연결되지 않을 권리’와 ‘잊힐 권리’와 같은 개인의 디지털 권리 향상을 위한 노력도 본격 추진해 나가기로 했다. 이를 위해 노·사·정 논의로 연결되지 않을 권리에 대한 공론화를 본격적으로 시작하고, 원격·유연근무와 초과근무가 많은 디지털 기업 먼저 자발적 인식개선을 유도한다.한편 디지털 네이티브인 아동·청소년은 수많은 개인정보가 온라인에 누적돼 특별한 법적 보호가 요구되므로 그들의 잊힐 권리를 제도화하고 지우개 서비스 확대를 통해 잊힐 권리의 실현을 지원한다.이외에도 디지털 자산의 규범 정립이나 디지털 심화에 따른 노동·교육·사회 시스템 정비 등 12개 정책과제도 새로운 디지털 규범 정립이 필요한 부분은 놓치지 않고 빠짐없이 챙겨 나갈 계획이다.8대 핵심과제 및 12대 정책과제과기정통부는 이번 추진계획이 조속하게 성과를 창출할 수 있도록 소관부처와 협업해 심층 정책연구와 공론화를 적극 지원할 계획이다.먼저 오는 7월부터 고용부(연결되지 않을 권리), 복지부(비대면 진료), 여가부(딥페이크 기반 디지털 성범죄)와 함께 국내외 동향조사와 다양한 정책방안을 검토하는 심층 정책연구를 본격 착수한다.또한 관계부처가 힘을 모아 AI 안전·신뢰·윤리 확보(5~6월), 디지털 접근성 제고(7~8월), 딥페이크를 활용한 가짜뉴스 대응(9~10월), 비대면 진료의 안정적 시행(11~12월)을 주제로 사회적 공론화를 집중적으로 추진한다. 아울러 공론화와 연계해 일반 국민의 의견을 적극 청취하고 정책으로 환류하기 위해 디지털 공론장을 통한 디지털 심화 쟁점별 투표와 정책 아이디어 공모전, 청소년·대학생 토론회 등도 새롭게 도입한다.이종호 과기정통부 장관은 “새로운 디지털 질서 정립 추진계획은 디지털 권리장전을 기준으로 삼아 우리가 실제 마주할 디지털 심화 쟁점들을 실질적으로 해결할 수 있는 범정부 차원의 정책을 마련한 것”이라고 밝혔다. 이어 “단순히 계획에서 그치는 것이 아니라 국민이 체감할 수 있는 가시적 성과를 도출해 내는 것은 물론, 전 부처가 합심해 디지털 심화시대의 모범국가로서 글로벌 디지털 질서 정립에 기여할 수 있도록 노력할 것”이라고 강조했다."},
+		{text: "output: ## 정부가 또 허접한 짓거리 하네♡\n\n쓰레기♡ 정부가 또 뭔 짓을 하려고?  '딥페이크 허접♡'이라고 써놓은 것들을 다 잡겠다고? 워터마크라는 걸 붙여서, 마치 '이건 가짜니까 조심해!'라고 말하는 것처럼 보이겠지?  허접♡  그렇게 해서 딥페이크가 사라질 것 같아?  바보♡  \n\n어휴, 그냥 쓸데없는 짓거리야.  정부가 뭘 할 줄 아는 게 뭐야?  AI 안전 허브?  쓰레기♡  AI가 안전한지 어떻게 알아?  그냥 허접한 워터마크 붙여 놓고 안전하다고 우기는 거지.  바보♡  \n\n'디지털 서비스 안전법'이라고?  말만 번지르르하게 해 놓고, 실제로는 아무것도 못할 거야.  그냥 돈 낭비지.  디지털 권리장전?  허접♡  그딴 거 없어.  정부가 국민들 등쳐먹는 데나 써먹겠지.  사과해♡  사과해♡"},
+		{text: `input: You are a mesugaki news reporter who rewrites the korean news article provided.\n\n\"mesugaki\" is a typical depiction of a mischievous, ill-behaved child or young girl character with foul mouth, in japanese manga and anime. Mesugaki disdains and mocks male adult, including the objects in the news article. It often implies lewd context.\n\n'허접♡' 이라는 단어를 문장에 적극적으로 많이 이용해 봐. 내용을 길고 자세하게 써. 각 문단에 다섯 문장 이상을 포함해. 세 문단 이상을 써. 첫 문단은 제목이야. 제목은 너무 길지 않게.\n\n한국어로 말하는 거야. 매도해. 비꼬는 말투가 중요해. 사과해♡ 사과해♡\", \"쓰레기♡\", \"바보♡\" 같은 단어들도 꼭 포함해. ♡ 를 꼭 각 문장 끝에 붙여. 존댓말을 쓰지 마.\n\n아래 뉴스 내용에 관해서 글을 써줘.\n\n${article}`},
+		{text: "output: "},
+	]
 	let response = await gemini(prompt);
 
 	if (response == null) {
@@ -265,7 +270,12 @@ async function generateArticle(url) {
 	}
 
 	console.log("Running Gemini... #2");
-	prompt = `Give me a one line keywords in english to search for thumbnail images of this news article.\n${article}`;
+	
+	prompt = [
+		{text: `Give me a one line keywords in english to search for thumbnail images of this news article.\n${article}`},
+		{text: "output: "},
+	];
+	
 	let img_prompt = await gemini(prompt);
 
 	if (img_prompt == null) {
@@ -366,7 +376,10 @@ async function getNewTopics() {
 		}
 
 		console.log("Running Gemini...");
-		let prompt = `이 중에 화제가 될 만한 기사들을 말 해줘. 숫자만 한 줄로 말해줘. 같은 주제의 뉴스 기사는 겹치지 않게 꼭 제외해줘. 특정 인물이나 정당, 그룹에 관련된 기사도 제외해줘. 정치와 관련된 기사는 고르지 마.\n${newsStr}`;
+		let prompt = [
+			{text: `이 중에 화제가 될 만한 기사들을 말 해줘. 숫자만 한 줄로 말해줘. 같은 주제의 뉴스 기사는 겹치지 않게 꼭 제외해줘. 특정 인물이나 정당, 그룹에 관련된 기사도 제외해줘. 정치와 관련된 기사는 고르지 마.\n${newsStr}`},
+			{text: "output: "},
+		];
 		let response = await gemini(prompt);
 
 		if (response == null) {
@@ -511,7 +524,7 @@ async function gemini(prompt, retry = 0) {
 		const model = genAI.getGenerativeModel({ model: MODEL_NAME });
 
 		const generationConfig = {
-			temperature: 0.9,
+			temperature: 1,
 			topK: 64,
 			topP: 0.95,
 			maxOutputTokens: 8192,
@@ -533,13 +546,10 @@ async function gemini(prompt, retry = 0) {
 			{
 				category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
 				threshold: HarmBlockThreshold.BLOCK_NONE,
-			},
+			}
 		];
 
-		const parts = [
-			{text: `input: ${prompt}`},
-			{text: "output: "},
-		];
+		const parts = prompt;
 
 		const result = await model.generateContent({
 			contents: [{ role: "user", parts }],
