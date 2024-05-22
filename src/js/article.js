@@ -109,6 +109,26 @@ function writeContent(response) {
 	let date = document.createElement('h3');
 	date.innerText = getDateString(response.date);
 
+	let report = document.createElement('div');
+	report.innerText = "신고하기";
+	report.classList.add('report');
+
+	report.addEventListener('click', () => {
+		let yes = confirm('해당 게시글을 신고하시겠습니까?');
+		if (yes) {
+			fetch(`${host}/api/report`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({
+					id: id
+				})
+			});
+			alert('신고가 접수되었습니다.');
+		}
+	});
+
 	let h4 = document.createElement('h4');
 	h4.innerText = "(기사 속 사건과 관련 없음)";
 	
@@ -169,6 +189,7 @@ function writeContent(response) {
 
 	content.prepend(h4);
 	content.prepend(img);
+	content.prepend(report);
 	content.prepend(date);
 	content.prepend(title);
 

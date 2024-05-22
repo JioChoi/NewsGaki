@@ -17,7 +17,7 @@ async function login() {
 	}
 
 	if (tries > 5) {
-		let response = await fetch(`${host}/api/list`, {
+		let response = await fetch(`${host}/api/reportlist`, {
 			method: 'POST',
 			body: JSON.stringify({ start: 0, size: 20 }),
 			headers: { 'Content-Type': 'application/json' }
@@ -25,12 +25,14 @@ async function login() {
 		response = await response.json();
 
 		let posts = document.getElementById('posts');
+
 		for (let i = 0; i < response.length; i++) {
 			let post = document.createElement('div');
 			post.innerHTML = `
 				<div class="post">
 					<h4>${response[i].title}<h4>
 					<h4>${response[i].id}<h4>
+					<h4>${response[i].report}<h4>
 					<br>
 				</div>
 			`;

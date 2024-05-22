@@ -109,6 +109,21 @@ app.post('/api/list', async (req, res) => {
 	res.send(response.rows);
 });
 
+app.post('/api/reportlist', async (req, res) => {
+	let start = req.body.start;
+	let size = req.body.size;
+
+	if (start == undefined || size == undefined || isNaN(start) || isNaN(size) || start < 0 || size < 0 || size > 20) {
+		res.status(400).send("Bad Request");
+		return;
+	}
+
+	let query = "SELECT * FROM news ORDER BY report DESC OFFSET $1 LIMIT $2";
+	let response = await queryDB(query, [start, size]);
+
+	res.send(response.rows);
+});
+
 app.post('/api/react', async (req, res) => {
 	let id = req.body.id;
 	if (id == undefined || id.length != 10) {
