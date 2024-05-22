@@ -91,7 +91,7 @@ async function loadComments() {
 	});
 
 	response = await response.json();
-	document.getElementById('comment_num').innerText = response.length + "개의 댓글";
+	document.getElementById('comment_num').innerText = "댓글 " + response.length + "개";
 
 	document.getElementById("comments").innerHTML = "";
 	
