@@ -183,6 +183,20 @@ app.get('/api/comments/:id', async (req, res) => {
 	res.send(response.rows);
 });
 
+app.post('/api/report', async (req, res) => {
+	let id = req.body.id;
+	
+	if (id == undefined || id.length != 10) {
+		res.status(400).send("Bad Request");
+		return;
+	}
+
+	let query = "UPDATE news SET report = report + 1 WHERE id = $1";
+	await queryDB(query, [id]);
+
+	res.send("Reported!");
+});
+
 app.post('/api/delete', async (req, res) => {
 	let id = req.body.id;
 	let pw = req.body.pw;
@@ -270,7 +284,7 @@ async function generateArticle(url) {
 	console.log("Running Gemini... #2");
 	
 	prompt = [
-		{text: `Give me a one line keywords in english to search for thumbnail images of this news article.\n${article}`},
+		{text: `Give me a one word in english to search for thumbnail images of this news article.\n${article}`},
 		{text: "output: "},
 	];
 	
