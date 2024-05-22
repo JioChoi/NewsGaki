@@ -589,9 +589,7 @@ async function gemini(prompt, retry = 0) {
 	} catch (e) {
 		console.log("Error in gemini()");
 		console.log(e);
-		console.log("Retrying...");
-		await delay(5000);
-		return await gemini(prompt, retry + 1);
+		return null;
 	}
 }
 
