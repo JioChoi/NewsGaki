@@ -299,7 +299,7 @@ async function generateArticle(url) {
 	console.log("Running Gemini... #2");
 	
 	prompt = [
-		{text: `Give me a one word in english to search for thumbnail images of this news article.\n${article}`},
+		{text: `Give me an "english" word to find images related to this news. Only give me the word.\n${article}`},
 		{text: "output: "},
 	];
 	
