@@ -180,6 +180,7 @@ function writeContent(response) {
 	response.article = response.article.replaceAll(' ♡', '♡');
 	response.article = response.article.replaceAll('♡♡', '♡');
 	response.article = response.article.replaceAll('♡♡♡', '♡');
+	response.article = response.article.replaceAll('♡.', '♡');
 
 	let data = response.article;
 
