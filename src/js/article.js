@@ -4,9 +4,12 @@ window.onbeforeunload = function () {
 	window.scrollTo(0, 0);
 }
 
-document.addEventListener('DOMContentLoaded', async () => {
-	id = new URLSearchParams(location.search).get('id');
+startLoadingArticle();
 
+async function startLoadingArticle() {
+	console.log("Loading article...");
+
+	id = new URLSearchParams(location.search).get('id');
 	if (!id || id.length != 10) {
 		location.href = '/';
 		return;
@@ -21,6 +24,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 	response = await response.json();
 	writeContent(response);
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+	console.log("DOM LOADED!!!");
+	id = new URLSearchParams(location.search).get('id');
+
 	loadComments();
 
 	document.getElementById('like').addEventListener('click', async () => {
