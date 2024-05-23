@@ -42,7 +42,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 			alert('이미 반응하셨습니다.')
 			return;
 		}
-		alert('추천했습니다.');
 
 		window.localStorage.setItem(id, 'true');
 
@@ -65,7 +64,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 			alert('이미 반응하셨습니다.')
 			return;
 		}
-		alert('비추천했습니다.');
 		
 		window.localStorage.setItem(id, 'true');
 
@@ -275,7 +273,7 @@ async function submit() {
 		return;
 	}
 
-	//alert('댓글을 작성했습니다.');
+	alert('댓글을 작성했습니다.');
 
 	await fetch(`${host}/api/comment`, {
 		method: 'POST',
