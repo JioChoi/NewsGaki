@@ -275,7 +275,7 @@ async function submit() {
 		return;
 	}
 
-	alert('댓글을 작성했습니다.');
+	//alert('댓글을 작성했습니다.');
 
 	await fetch(`${host}/api/comment`, {
 		method: 'POST',
