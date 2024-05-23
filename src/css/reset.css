@@ -38,6 +38,7 @@ time, mark, audio, video, textarea, button {
 h1, h2, h3, h4, h5, h6, p, span {
 	white-space: break-spaces;
 	word-break: keep-all;
+	overflow-wrap: break-word;
 }
 
 /* HTML5 display-role reset for older browsers */
