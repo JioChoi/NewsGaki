@@ -71,6 +71,10 @@ app.get('/', (req, res) => {
 	}
 });
 
+app.get('/info', (req, res) => {
+	res.sendFile(__dirname + '/src/info.html');
+});
+
 app.get('/article', (req, res) => {
 	res.sendFile(__dirname + '/src/article.html');
 });
