@@ -292,63 +292,69 @@ async function queryDB(query, params) {
 }
 
 async function generateArticle(url) {
-	console.log("Crawling article...");
-	let article = await getNewsArticle(url);
+	try {
+		console.log("Crawling article...");
+		let article = await getNewsArticle(url);
 
-	console.log("Running Gemini... #1");
-	let prompt = [
-		{text: `input: You are a mesugaki news reporter who rewrites the korean news article provided.\n\n\"mesugaki\" is a typical depiction of a mischievous, ill-behaved child or young girl character with foul mouth, in japanese manga and anime. Mesugaki disdains and mocks male adult, including the objects in the news article. It often implies lewd context.\n\n'허접♡' 이라는 단어를 문장에 적극적으로 많이 이용해 봐. 내용을 길고 자세하게 써. 각 문단에 다섯 문장 이상을 포함해. 세 문단 이상을 써. 첫 문단은 제목이야. 제목은 너무 길지 않게.\n\n한국어로 말하는 거야. 매도해. 비꼬는 말투가 중요해. "쓰레기♡", "바보♡" 같은 단어들을 적극적으로 잘 이용해봐. ♡ 를 꼭 각 문장 끝에 붙여. 존댓말을 쓰지 마. 기사 내용을 포함해. \n\n아래 뉴스 내용에 관해서 글을 써줘.\n\n${article}`},
-		{text: "output: "},
-	]
-	let response = await gemini(prompt);
+		console.log("Running Gemini... #1");
+		let prompt = [
+			{ text: `input: You are a mesugaki news reporter who rewrites the korean news article provided.\n\n\"mesugaki\" is a typical depiction of a mischievous, ill-behaved child or young girl character with foul mouth, in japanese manga and anime. Mesugaki disdains and mocks male adult, including the objects in the news article. It often implies lewd context.\n\n'허접♡' 이라는 단어를 문장에 적극적으로 많이 이용해 봐. 내용을 길고 자세하게 써. 각 문단에 다섯 문장 이상을 포함해. 세 문단 이상을 써. 첫 문단은 제목이야. 제목은 너무 길지 않게.\n\n한국어로 말하는 거야. 매도해. 비꼬는 말투가 중요해. "쓰레기♡", "바보♡" 같은 단어들을 적극적으로 잘 이용해봐. ♡ 를 꼭 각 문장 끝에 붙여. 존댓말을 쓰지 마. 기사 내용을 포함해. \n\n아래 뉴스 내용에 관해서 글을 써줘.\n\n${article}` },
+			{ text: "output: " },
+		]
+		let response = await gemini(prompt);
 
-	if (response == null) {
-		console.log("Gemini returned null. Skipping article.");
+		if (response == null) {
+			console.log("Gemini returned null. Skipping article.");
+			return;
+		}
+
+		console.log("Running Gemini... #2");
+	
+		prompt = [
+			{ text: `input: Give me an "english" word to find images related to this news. Only give me the word.\n${article}` },
+			{ text: "output: " },
+		];
+	
+		let img_prompt = await gemini(prompt);
+
+		if (img_prompt == null) {
+			console.log("Gemini returned null. Skipping article.");
+			return;
+		}
+
+		let img = await getPhoto(img_prompt);
+
+		response = response.split('\n');
+		response = response.filter(item => item.length > 1);
+
+		let title = response[0];
+		title = title.replaceAll('#', '');
+		title = title.replaceAll('*', '');
+		title = title.trim();
+
+		response = response.slice(1);
+		let data = response.join('\n');
+		data = data.replaceAll('#', '');
+		data = data.replaceAll('*', '');
+		data = data.trim();
+
+		let date = await getKoreanTime();
+		let id = getID(date);
+
+		console.log("Querying DB...");
+
+		let query = "INSERT INTO news (id, date, title, article, img) VALUES ($1, $2, $3, $4, $5)";
+		let res = await queryDB(query, [id, date, title, data, img]);
+
+		console.log(id);
+		console.log(title);
+
+		console.log("Uploaded to DB!");
+	} catch (e) {
+		console.log("Error in generateArticle()");
+		console.log(e);
 		return;
 	}
-
-	console.log("Running Gemini... #2");
-	
-	prompt = [
-		{text: `input: Give me an "english" word to find images related to this news. Only give me the word.\n${article}`},
-		{text: "output: "},
-	];
-	
-	let img_prompt = await gemini(prompt);
-
-	if (img_prompt == null) {
-		console.log("Gemini returned null. Skipping article.");
-		return;
-	}
-
-	let img = await getPhoto(img_prompt);
-
-	response = response.split('\n');
-	response = response.filter(item => item.length > 1);
-
-	let title = response[0];
-	title = title.replaceAll('#', '');
-	title = title.replaceAll('*', '');
-	title = title.trim();
-
-	response = response.slice(1);
-	let data = response.join('\n');
-	data = data.replaceAll('#', '');
-	data = data.replaceAll('*', '');
-	data = data.trim();
-
-	let date = await getKoreanTime();
-	let id = getID(date);
-
-	console.log("Querying DB...");
-
-	let query = "INSERT INTO news (id, date, title, article, img) VALUES ($1, $2, $3, $4, $5)";
-	let res = await queryDB(query, [id, date, title, data, img]);
-
-	console.log(id);
-	console.log(title);
-
-	console.log("Uploaded to DB!");
 }
 
 async function getKoreanTime() {
