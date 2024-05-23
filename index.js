@@ -124,6 +124,13 @@ app.post('/api/reportlist', async (req, res) => {
 	res.send(response.rows);
 });
 
+app.get('/allcomments', async (req, res) => {
+	let query = "SELECT * FROM comment ORDER BY date DESC";
+	let response = await queryDB(query, []);
+
+	res.send(response.rows);
+});
+
 app.post('/api/react', async (req, res) => {
 	let id = req.body.id;
 	if (id == undefined || id.length != 10) {
