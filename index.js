@@ -528,16 +528,26 @@ async function getNews(id) {
 	});
 }
 
-// getPhoto("aliexpress");
-
 async function getPhoto(keyword) {
-	const config = {
+	let config = {
 		method: 'get',
 		url: `https://unsplash.com/napi/search/photos?query=${keyword}&per_page=1`,
 	};
 
 	let response = await axios(config);
-	let photo = response.data.results[0].urls.regular;
+	response = response.data;
+
+	if (response.results.length == 0) {
+		config = {
+			method: 'get',
+			url: 'https://source.unsplash.com/random'
+		};
+
+		response = await axios(config);
+		return response.request.res.responseUrl;
+	}
+
+	let photo = response.results[0].urls.regular;
 	return photo;
 }
 
