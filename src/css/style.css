@@ -67,6 +67,10 @@
 	margin-left: 5px;
 }
 
+.article.read {
+	opacity: 0.5;
+}
+
 .more {
 	display: flex;
 	justify-content: center;

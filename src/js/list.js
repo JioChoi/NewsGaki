@@ -72,7 +72,13 @@ function createItem(title_text, date_text, id, comment_num) {
 	date.textContent = date_text;
 	item.appendChild(date);
 
+	if (window.localStorage.getItem(`read_${id}`)) {
+		item.classList.add('read');
+	}
+
 	item.addEventListener('click', () => {
+		item.classList.add('read');
+		window.localStorage.setItem(`read_${id}`, true);
 		location.href = `/article?id=${id}`;
 	});
 
