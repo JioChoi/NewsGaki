@@ -48,7 +48,7 @@
 
 .article h2 {
 	font-size: 16px;
-	font-weight: 400;
+	font-weight: 500;
 	margin-bottom: 5px;
 
 	line-height: 1.5;
@@ -182,7 +182,7 @@
 
 #content p {
 	font-size: 16px;
-	font-weight: 400;
+	font-weight: 500;
 	margin: 0 15px;
 	margin-bottom: 20px;
 
@@ -218,7 +218,7 @@
 
 .comments h2 {
 	font-size: 18px;
-	font-weight: 400;
+	font-weight: 500;
 	margin: 0 15px;
 	margin-bottom: 10px;
 }
@@ -239,7 +239,7 @@
 .comments .item p {
 	padding: 3px;
 	font-size: 16px;
-	font-weight: 400;
+	font-weight: 500;
 	line-height: 1.25;
 }
 
@@ -255,7 +255,7 @@
 
 .comments .pages span {
 	font-size: 16px;
-	font-weight: 400;
+	font-weight: 500;
 
 	width: 28px;
 	height: 28px;
@@ -298,7 +298,7 @@
 	resize: none;
 
 	font-size: 16px;
-	font-weight: 400;
+	font-weight: 500;
 
 	outline: none;
 	border: 1px solid #e5e5e5;
