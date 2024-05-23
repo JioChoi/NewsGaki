@@ -27,6 +27,11 @@ async function startLoadingArticle() {
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
+	// Rendom comment
+	if (Math.random() * 100 == 1) {
+		document.getElementById('edit').value = "히잡♡"
+	}
+
 	console.log("DOM LOADED!!!");
 	id = new URLSearchParams(location.search).get('id');
 
