@@ -3,7 +3,8 @@
    License: none (public domain)
 */
 
-@import url("https://cdn.jsdelivr.net/npm/font-applesdgothicneo@1.0.3/css/all.min.css");
+/* @import url("https://cdn.jsdelivr.net/npm/font-applesdgothicneo@1.0.3/css/all.min.css"); */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap');
 
 /*
 	300
@@ -28,7 +29,9 @@ time, mark, audio, video, textarea, button {
 	padding: 0;
 	border: 0;
 	font-size: 100%;
-	font-family: "Apple SD Gothic Neo";
+	/* font-family: "Apple SD Gothic Neo"; */
+	font-family: "Noto Sans KR", sans-serif;
+	font-optical-sizing: auto;
 	/* font-family: 'KoPub Dotum', sans-serif; */
 	/* font-family: -apple-system, BlinkMacSystemFont, "NanumBarunGothicOTF", system-ui, sans-serif; */
 	font-weight: 400;
