@@ -109,9 +109,24 @@ function writeContent(response) {
 	let date = document.createElement('h3');
 	date.innerText = getDateString(response.date);
 
+	let div = document.createElement('div');
+	div.classList.add('actions');
+
+	let url = document.createElement('div');
+	url.classList.add('url');
+	url.innerText = "https://newsgaki.com/article?id=" + response.id;
+
+	url.addEventListener('click', () => {
+		navigator.clipboard.writeText(url.innerText);
+		alert('게시글 주소가 복사되었습니다.');
+	});
+
 	let report = document.createElement('div');
 	report.innerText = "신고하기";
 	report.classList.add('report');
+
+	div.appendChild(url);
+	div.appendChild(report);
 
 	report.addEventListener('click', () => {
 		let yes = confirm('해당 게시글을 신고하시겠습니까?');
@@ -189,7 +204,7 @@ function writeContent(response) {
 
 	content.prepend(h4);
 	content.prepend(img);
-	content.prepend(report);
+	content.prepend(div);
 	content.prepend(date);
 	content.prepend(title);
 

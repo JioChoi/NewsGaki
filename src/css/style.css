@@ -124,20 +124,37 @@
 	margin-bottom: 8px;
 }
 
-#content .report {
-	float: right;
-	margin-right: 15px;
+#content .actions {
+	display: flex;
 
-	font-size: 12px;
-	font-weight: 500;
-	color: #939393;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+
+	width: calc(100% - 30px);
+	margin: 0 15px;
 
 	margin-bottom: 50px;
 }
 
+#content .report {
+	font-size: 12px;
+	font-weight: 500;
+	color: #939393;
+}
 #content .report:hover {
 	cursor: pointer;
 	text-decoration: underline;
+}
+
+#content .url {
+	font-size: 12px;
+	font-weight: 500;
+	color: #939393;
+	text-decoration: underline;
+}
+#content .url:hover {
+	cursor: pointer;
 }
 
 #content h4 {
