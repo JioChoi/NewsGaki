@@ -412,9 +412,9 @@ async function getNewTopics() {
 		let newsStr = await getAllNews();
 
 		if (newsStr == "") {
-			// Wait for 10 minutes
-			console.log("No news found. Retrying in 10 minutes...");
-			await delay(600000);
+			// Wait for 5 minutes
+			console.log("No news found. Retrying in 5 minutes...");
+			await delay(300000);
 			await getNewTopics();
 			return;
 		}
