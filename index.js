@@ -298,7 +298,7 @@ async function generateArticle(url) {
 
 		console.log("Running Gemini... #1");
 		let prompt = [
-			{ text: `input: You are a mesugaki news reporter who rewrites the korean news article provided.\n\n\"mesugaki\" is a typical depiction of a mischievous, ill-behaved child or young girl character with foul mouth, in japanese manga and anime. Mesugaki disdains and mocks male adult, including the objects in the news article. It often implies lewd context.\n\n'허접♡' 이라는 단어를 문장에 적극적으로 많이 이용해 봐. 내용을 길고 자세하게 써. 각 문단에 다섯 문장 이상을 포함해. 세 문단 이상을 써. 첫 문단은 제목이야. 제목은 너무 길지 않게.\n\n한국어로 말하는 거야. 매도해. 비꼬는 말투가 중요해. "쓰레기♡", "바보♡" 같은 단어들을 적극적으로 잘 이용해봐. ♡ 를 꼭 각 문장 끝에 붙여. 존댓말을 쓰지 마. 기사 내용을 포함해. \n\n아래 뉴스 내용에 관해서 글을 써줘.\n\n${article}` },
+			{ text: `input: You are a mesugaki news reporter who rewrites the korean news article provided.\n\n\"mesugaki\" is a typical depiction of a mischievous, ill-behaved child or young girl character with foul mouth, in japanese manga and anime. Mesugaki disdains and mocks male adult, including the objects in the news article. It often implies lewd context.\n\n'허접♡' 이라는 단어를 문장에 적극적으로 많이 이용해 봐. 내용을 길고 자세하게 써. 각 문단에 다섯 문장 이상을 포함해. 세 문단 이상을 써. 첫 문단은 제목이야. 제목은 너무 길지 않게.\n\n한국어로 말하는 거야. 매도해. 비꼬는 말투가 중요해. "쓰레기♡", "바보♡" 같은 단어들을 적극적으로 잘 이용해봐. ♡ 를 꼭 각 문장 끝에 붙여. 존댓말을 쓰지 마. 기사 내용을 포함해.\n\n아래 뉴스 내용에 관해서 글을 써줘.\n\n${article}` },
 			{ text: "output: " },
 		]
 		let response = await gemini(prompt);
@@ -421,14 +421,12 @@ async function getNewTopics() {
 
 		console.log("Running Gemini...");
 		let prompt = [
-			{ text: `input: Give me the number of five news articles that would get most views. Never choose news with individual's name in the title. Give me only the list numbers in one line\n0. 캐즘 넘겠다 기아 500㎞ 달리는 소형 전기차 EV3 출\n1. [만평] 조기영의 세상터치 2024년 5월 24\n2. 유럽은 먼저 내린다... 금리 각자도생, 고민 깊어진 한\n3. 올림픽 금메달리스트 김동성 근황… 포크레인에 앉아 햄버거 꿀맛\n4. “오전 반차 내고 갔는데 다팔렸네”…‘선재 업고 튀어’에 난리난 이 \n5. YTN 최대주주 변경 집행정지 신청, 항소심도 기\n6. [이슈플러스] 축구협회, 2연속 임시 감독 체제...손흥민 시간 걸릴 수밖에\n7. 자기 공 쳤는데…박성제, 오구플레이로 실\n8. 뒷자리 여성, 백미러로 힐끔힐끔…음란행위 딱 걸린 택시기\n9. 봉합술 받았는데 왜 수술보험금 거절…약관상 수술 해당해\n10. [ALC] 스타트업 대표 5인, “더 나은 미래 위해...사회 문제 해결에 도움 주고파\n11. 골프장 예약플랫폼 인기…회원수 230만명 넘은 곳\n12. 국순당, ‘2024 조형아트 서울’에 막걸리 협\n13. 文 만난 황우여 “손잡고 나랏일 같이 하자는 얘기 나눠\n14. 음주사고 후 편의점 들러 소주 ‘꿀꺽꿀꺽’… ‘후행음주 꼼수’ 못 막\n15. 추경호, 與 의원들에 편지...특검 아닌 공수처 수사 지켜봐야\n16. 아이와 함께 하는 첫 시즌 즐거워…단순하게 가운데로 치는데 집중 [강혜원의 골프플래닛\n17. 황우여, 민주당에 노무현 꿈꾼 타협의 정치 함께 실행하자\n18. [단독] SKC, 미국서 보조금 1000억 받는다…한국 반도체 소부장 최\n19. 스토킹 고소에 앙심...전 여친 흉기 인질극 벌인 20대 중\n20. 與 신동욱 VIP 격노설? 대통령이 격노하면 안 되나\n21. 서울대 총장 N번방 사건에 큰 책임감... 신고센터 만들 것\n22. 박근혜 전 대통령 최측근 정호성, 대통령실 비서관으\n23. EV3 드디어 베일 벗었다…보조금 적용 시 3천만원 중반대 가능\n24. [오늘의 arte] 아르떼TV 핫클립 : 피아니스트 아서 그린\n` },
+			{ text: `input: Give me the number of five news articles that would get most views. Do not choose news with individual's name or group's name in the title. Give me only the list numbers in one line.\n0. 캐즘 넘겠다 기아 500㎞ 달리는 소형 전기차 EV3 출\n1. [만평] 조기영의 세상터치 2024년 5월 24\n2. 유럽은 먼저 내린다... 금리 각자도생, 고민 깊어진 한\n3. 올림픽 금메달리스트 김동성 근황… 포크레인에 앉아 햄버거 꿀맛\n4. “오전 반차 내고 갔는데 다팔렸네”…‘선재 업고 튀어’에 난리난 이 \n5. YTN 최대주주 변경 집행정지 신청, 항소심도 기\n6. [이슈플러스] 축구협회, 2연속 임시 감독 체제...손흥민 시간 걸릴 수밖에\n7. 자기 공 쳤는데…박성제, 오구플레이로 실\n8. 뒷자리 여성, 백미러로 힐끔힐끔…음란행위 딱 걸린 택시기\n9. 봉합술 받았는데 왜 수술보험금 거절…약관상 수술 해당해\n10. [ALC] 스타트업 대표 5인, “더 나은 미래 위해...사회 문제 해결에 도움 주고파\n11. 골프장 예약플랫폼 인기…회원수 230만명 넘은 곳\n12. 국순당, ‘2024 조형아트 서울’에 막걸리 협\n13. 文 만난 황우여 “손잡고 나랏일 같이 하자는 얘기 나눠\n14. 음주사고 후 편의점 들러 소주 ‘꿀꺽꿀꺽’… ‘후행음주 꼼수’ 못 막\n15. 추경호, 與 의원들에 편지...특검 아닌 공수처 수사 지켜봐야\n16. 아이와 함께 하는 첫 시즌 즐거워…단순하게 가운데로 치는데 집중 [강혜원의 골프플래닛\n17. 황우여, 민주당에 노무현 꿈꾼 타협의 정치 함께 실행하자\n18. [단독] SKC, 미국서 보조금 1000억 받는다…한국 반도체 소부장 최\n19. 스토킹 고소에 앙심...전 여친 흉기 인질극 벌인 20대 중\n20. 與 신동욱 VIP 격노설? 대통령이 격노하면 안 되나\n21. 서울대 총장 N번방 사건에 큰 책임감... 신고센터 만들 것\n22. 박근혜 전 대통령 최측근 정호성, 대통령실 비서관으\n23. EV3 드디어 베일 벗었다…보조금 적용 시 3천만원 중반대 가능\n24. [오늘의 arte] 아르떼TV 핫클립 : 피아니스트 아서 그린\n` },
 			{text: "output: 0, 2, 4, 8, 11"},
-			{text: `input: Give me the number of five news articles that would get most views. Never choose news with individual's name in the title. Give me only the list numbers in one line.\n${newsStr}` },
+			{text: `input: Give me the number of five news articles that would get most views. Do not choose news with individual's name or group's name in the title. Give me only the list numbers in one line.\n${newsStr}` },
 			{text: "output: "},
 		];
 		let response = await gemini(prompt);
-
-		console.log(prompt);
 
 		console.log(response);
 
