@@ -2,9 +2,10 @@
   "name": "newsgaki",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "vercel.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+	"start": "node vercel.js"
   },
   "author": "",
   "license": "ISC",
@@ -15,6 +16,7 @@
     "express": "^4.19.2",
     "jsdom": "^24.0.0",
     "node-fetch": "^3.3.2",
-    "pg": "^8.11.5"
+    "pg": "^8.11.5",
+    "sitemap": "^8.0.0"
   }
 }
