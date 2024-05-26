@@ -95,7 +95,7 @@ app.get('/article/:id', async (req, res) => {
 		article = article.replaceAll('♡♡', '♡');
 		article = article.replaceAll('♡♡♡', '♡');
 		article = article.replaceAll('♡.', '♡');
-		data = data.replace('${description}', article.replaceAll('\n', ' '));
+		data = data.replaceAll('${description}', article.replaceAll('\n', ' '));
 
 		article = article.replaceAll('♡', '<span class="hearts" onclick="heart(this)">&#9825;</span>');
 
