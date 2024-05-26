@@ -35,7 +35,6 @@ app.use('/assets', express.static(__dirname + '/src/assets'));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-
 app.get('/', (req, res) => {
 	res.sendFile(__dirname + '/src/index.html');
 });
@@ -46,7 +45,7 @@ app.get('/article/:id', async (req, res) => {
 		return;
 	}
 
-	fs.readFile(__dirname + '/src/article_test.html', 'utf8', async (err, data) => {
+	fs.readFile(__dirname + '/src/article_server.html', 'utf8', async (err, data) => {
 		if (err) {
 			console.log(err);
 			res.send('Error');
@@ -68,7 +67,6 @@ app.get('/article/:id', async (req, res) => {
 		data = data.replaceAll('${dislike_count}', response.rows[0].dislikes);
 
 		let article = response.rows[0].article;
-		article += '\n';
 		
 		article = article.replaceAll('    ', ' ');
 		article = article.replaceAll('   ', ' ');
@@ -81,31 +79,23 @@ app.get('/article/:id', async (req, res) => {
 		article = article.replaceAll('♡♡', '♡');
 		article = article.replaceAll('♡♡♡', '♡');
 		article = article.replaceAll('♡.', '♡');
-		
-		let content = "";
-		let buffer = "";
-		for (let i = 0; i < article.length; i++) {
-			let char = article[i];
+		article = article.replaceAll('♡', '<span class="hearts" onclick="heart(this)">&#9825;</span>');
 
-			if (char == '\n' && buffer.length > 1) {
-				content += '<p>' + buffer + '</p>\n';
-				buffer = "";
-			}
-
-			if (char != '\n') {
-				if (char == '♡') {
-					buffer += '<span class="hearts" onclick="heart(this)">&#9825;</span>';
-				}
-				else {
-					buffer += char;
-				}
-			}
+		article = article.split('\n');
+		// <p> article </p>
+		let content = '';
+		for (let line of article) {
+			content += `<p>${line}</p>`;
 		}
 
 		data = data.replace('${contents}', content);
 
 		res.send(data);
 	});
+});
+
+app.get('*', function(req, res) {
+    res.redirect('/');
 });
 
 app.listen(80, () => {

@@ -4,28 +4,6 @@ window.onbeforeunload = function () {
 	window.scrollTo(0, 0);
 }
 
-startLoadingArticle();
-
-async function startLoadingArticle() {
-	console.log("Loading article...");
-
-	id = new URLSearchParams(location.search).get('id');
-	if (!id || id.length != 10) {
-		location.href = '/';
-		return;
-	}
-
-	let response = await fetch(`${host}/api/article/${id}`, {
-		method: 'GET',
-		headers: {
-			'Content-Type': 'application/json'
-		}
-	});
-
-	response = await response.json();
-	writeContent(response);
-}
-
 document.addEventListener('DOMContentLoaded', async () => {
 	// Rendom comment
 	if (Math.random() * 100 == 1) {
@@ -33,9 +11,30 @@ document.addEventListener('DOMContentLoaded', async () => {
 	}
 
 	console.log("DOM LOADED!!!");
-	id = new URLSearchParams(location.search).get('id');
+	id = window.location.pathname.split('/')[2];
 
 	loadComments();
+
+	document.getElementById('url').addEventListener('click', () => {
+		navigator.clipboard.writeText(url.innerText);
+		alert('게시글 주소가 복사되었습니다.');
+	});
+
+	document.getElementById('report').addEventListener('click', () => {
+		let yes = confirm('해당 게시글을 신고하시겠습니까?');
+		if (yes) {
+			fetch(`${host}/api/report`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({
+					id: id
+				})
+			});
+			alert('신고가 접수되었습니다.');
+		}
+	});
 
 	document.getElementById('like').addEventListener('click', async () => {
 		if (window.localStorage.getItem(id) == 'true') {
@@ -111,118 +110,6 @@ async function loadComments() {
 		addComment(comment.name, comment.comment);
 	});
 
-}
-
-function writeContent(response) {
-	let title = document.createElement('h1');
-	title.innerText = response.title;
-	document.title = response.title;
-
-	let date = document.createElement('h3');
-	date.innerText = getDateString(response.date);
-
-	let div = document.createElement('div');
-	div.classList.add('actions');
-
-	let url = document.createElement('div');
-	url.classList.add('url');
-	url.innerText = "https://newsgaki.com/article?id=" + response.id;
-
-	url.addEventListener('click', () => {
-		navigator.clipboard.writeText(url.innerText);
-		alert('게시글 주소가 복사되었습니다.');
-	});
-
-	let report = document.createElement('div');
-	report.innerText = "신고하기";
-	report.classList.add('report');
-
-	div.appendChild(url);
-	div.appendChild(report);
-
-	report.addEventListener('click', () => {
-		let yes = confirm('해당 게시글을 신고하시겠습니까?');
-		if (yes) {
-			fetch(`${host}/api/report`, {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify({
-					id: id
-				})
-			});
-			alert('신고가 접수되었습니다.');
-		}
-	});
-
-	let h4 = document.createElement('h4');
-	h4.innerText = "(기사 속 사건과 관련 없음)";
-	
-	let img = document.createElement('img');
-	if (response.img.substring(0, 4) == 'http') {
-		img.src = response.img;
-	}
-	else {
-		img.src = `https://image.pollinations.ai/prompt/${response.img}`;
-		h4.innerText = "(AI가 생성한 이미지 입니다. 실제와 다를 수 있습니다.)";
-	}
-
-	let content = document.getElementById('content');
-	// Remove multiple spaces
-	response.article = response.article.replaceAll('    ', ' ');
-	response.article = response.article.replaceAll('   ', ' ');
-	response.article = response.article.replaceAll('  ', ' ');
-	
-	response.article = response.article.replaceAll('!', '♡');
-	response.article = response.article.replaceAll('. ', '♡ ');
-	response.article = response.article.replaceAll('.♡', '♡');
-	response.article = response.article.replaceAll(' ♡', '♡');
-	response.article = response.article.replaceAll('♡♡', '♡');
-	response.article = response.article.replaceAll('♡♡♡', '♡');
-	response.article = response.article.replaceAll('♡.', '♡');
-
-	let data = response.article;
-
-	let h5 = document.createElement('h5');
-	h5.innerHTML = "해당 기사는 AI 기자 <strong>뉴스가키</strong>가 작성하였습니다.";
-
-	// Remove first children
-	content.removeChild(content.firstElementChild);
-
-	data += '\n';
-
-	content.prepend(h5);
-
-	let buffer = "";
-	for (let i = 0; i < data.length; i++) {
-		let char = data[i];
-
-		if (char == '\n' && buffer.length > 1) {
-			let p = document.createElement('p');
-			p.innerHTML = buffer;
-			content.insertBefore(p, h5);
-			buffer = "";
-		}
-
-		if (char != '\n') {
-			if (char == '♡') {
-				buffer += '<span class="hearts" onclick="heart(this)">&#9825;</span>';
-			}
-			else {
-				buffer += char;
-			}
-		}
-	}
-
-	content.prepend(h4);
-	content.prepend(img);
-	content.prepend(div);
-	content.prepend(date);
-	content.prepend(title);
-
-	document.getElementById('like_count').innerText = response.likes;
-	document.getElementById('dislike_count').innerText = response.dislikes;
 }
 
 function heart(hearts) {

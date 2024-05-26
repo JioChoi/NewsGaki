@@ -79,7 +79,7 @@ function createItem(title_text, date_text, id, comment_num) {
 	item.addEventListener('click', () => {
 		item.classList.add('read');
 		window.localStorage.setItem(`read_${id}`, true);
-		location.href = `/article?id=${id}`;
+		location.href = `/article/${id}`;
 	});
 
 	return item;
