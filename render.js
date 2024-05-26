@@ -41,19 +41,68 @@ app.get('/', (req, res) => {
 });
 
 app.get('/article/:id', async (req, res) => {
-	console.log(req.params.id);
 	if(!req.params.id || req.params.id.length != 10) {
 		res.send('Invalid ID');
 		return;
 	}
 
-	fs.readFile(__dirname + '/src/article_test.html', 'utf8', (err, data) => {
+	fs.readFile(__dirname + '/src/article_test.html', 'utf8', async (err, data) => {
 		if (err) {
 			console.log(err);
 			res.send('Error');
 		}
 
+		let query = 'SELECT * FROM news WHERE id = $1';
+		let response = await queryDB(query, [req.params.id]);
+		if (!response || response.rows.length == 0) {
+			res.send('Invalid ID');
+			return;
+		}
+
 		// Load Article
+		data = data.replaceAll('${title}', response.rows[0].title);
+		data = data.replaceAll('${date}', getDateString(response.rows[0].date));
+		data = data.replaceAll('${url}', 'https://newsgaki.com/article/' + response.rows[0].id);
+		data = data.replaceAll('${img}', response.rows[0].img);
+		data = data.replaceAll('${like_count}', response.rows[0].likes);
+		data = data.replaceAll('${dislike_count}', response.rows[0].dislikes);
+
+		let article = response.rows[0].article;
+		article += '\n';
+		
+		article = article.replaceAll('    ', ' ');
+		article = article.replaceAll('   ', ' ');
+		article = article.replaceAll('  ', ' ');
+		
+		article = article.replaceAll('!', '♡');
+		article = article.replaceAll('. ', '♡ ');
+		article = article.replaceAll('.♡', '♡');
+		article = article.replaceAll(' ♡', '♡');
+		article = article.replaceAll('♡♡', '♡');
+		article = article.replaceAll('♡♡♡', '♡');
+		article = article.replaceAll('♡.', '♡');
+		
+		let content = "";
+		let buffer = "";
+		for (let i = 0; i < article.length; i++) {
+			let char = article[i];
+
+			if (char == '\n' && buffer.length > 1) {
+				content += '<p>' + buffer + '</p>\n';
+				buffer = "";
+			}
+
+			if (char != '\n') {
+				if (char == '♡') {
+					buffer += '<span class="hearts" onclick="heart(this)">&#9825;</span>';
+				}
+				else {
+					buffer += char;
+				}
+			}
+		}
+
+		data = data.replace('${contents}', content);
 
 		res.send(data);
 	});
@@ -63,4 +112,32 @@ app.listen(80, () => {
 	console.log('Server is running on port 80');
 });
 
-module.exports = app;
+async function queryDB(query, params) {
+	try {
+		let response = await client.query(query, params);
+		return response;
+	} catch (e) {
+		console.log("Error in queryDB()");
+		console.log(e);
+	}
+}
+
+
+function getDateString(time) {
+	let date = new Date(Number(time));
+
+	let year = date.getFullYear();
+	let month = date.getMonth() + 1;
+	let day = date.getDate();
+	let hours = date.getHours();
+	let minutes = date.getMinutes();
+	let seconds = date.getSeconds();
+
+	month = ("0" + month).slice(-2);
+	day = ("0" + day).slice(-2);
+	hours = ("0" + hours).slice(-2);
+	minutes = ("0" + minutes).slice(-2);
+	seconds = ("0" + seconds).slice(-2);
+
+	return `${year}.${month}.${day} ${hours}:${minutes}:${seconds}`;
+}
