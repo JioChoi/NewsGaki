@@ -4,6 +4,12 @@ const dotenv = require('dotenv');
 const pg = require('pg');
 dotenv.config();
 
+const { SitemapStream, streamToPromise } = require('sitemap');
+const { createGzip } = require('zlib');
+const { Readable } = require('stream');
+
+let sitemap;
+
 const client = new pg.Pool({
 	user: process.env.DB_USER,
 	host: process.env.DB_HOST,
@@ -37,6 +43,16 @@ app.use(express.json());
 
 app.get('/', (req, res) => {
 	res.sendFile(__dirname + '/src/index.html');
+});
+
+app.get('/sitemap', async (req, res) => {
+	res.header('Content-Type', 'application/xml');
+	res.header('Content-Encoding', 'gzip');
+
+	if (sitemap) {
+		res.send(sitemap);
+		return;
+	}
 });
 
 app.get('/article/:id', async (req, res) => {
@@ -79,10 +95,11 @@ app.get('/article/:id', async (req, res) => {
 		article = article.replaceAll('♡♡', '♡');
 		article = article.replaceAll('♡♡♡', '♡');
 		article = article.replaceAll('♡.', '♡');
+		data = data.replace('${description}', article.replaceAll('\n', ' '));
+
 		article = article.replaceAll('♡', '<span class="hearts" onclick="heart(this)">&#9825;</span>');
 
 		article = article.split('\n');
-		// <p> article </p>
 		let content = '';
 		for (let line of article) {
 			content += `<p>${line}</p>`;
@@ -100,7 +117,16 @@ app.get('*', function(req, res) {
 
 app.listen(80, () => {
 	console.log('Server is running on port 80');
+
+	setIntervalAndExecute(async () => {
+		await createSitemap();
+	}, 60000 * 10);
 });
+
+function setIntervalAndExecute(fn, t) {
+    fn();
+    return(setInterval(fn, t));
+}
 
 async function queryDB(query, params) {
 	try {
@@ -130,4 +156,30 @@ function getDateString(time) {
 	seconds = ("0" + seconds).slice(-2);
 
 	return `${year}.${month}.${day} ${hours}:${minutes}:${seconds}`;
+}
+
+async function createSitemap() {
+	try {
+		const smStream = new SitemapStream({ hostname: 'https://newsgaki.com/', xlmns: { news: true, image: true } });
+		const pipeline = smStream.pipe(createGzip());
+
+		// pipe your entries or directly write them.
+		smStream.write({ url: '/', changefreq: 'daily', priority: 1 });
+
+		// Get all articles id and date
+		let query = "SELECT id, date FROM news ORDER BY date DESC";
+		let response = await queryDB(query, []);
+		let articles = response.rows;
+
+		for (let article of articles) {
+			smStream.write({ url: `/article/${article.id}`, changefreq: 'daily', priority: 0.9, lastmod: new Date(Number(article.date)).toISOString()});
+		}
+
+		smStream.end();
+
+		// cache the response
+		sitemap = await streamToPromise(pipeline);
+	} catch (e) {
+		console.error(e)
+	}
 }

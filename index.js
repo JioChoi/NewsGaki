@@ -10,9 +10,6 @@ const { JSDOM } = require('jsdom');
 const pg = require('pg');
 const express = require('express');
 const crypto = require('crypto');
-const { SitemapStream, streamToPromise } = require('sitemap')
-const { createGzip } = require('zlib')
-const { Readable } = require('stream')
 
 dotenv.config();
 
@@ -25,8 +22,6 @@ const API_KEY = process.env.GEMINI_API_KEY;
 let ids = [8, 38, 33, 17, 49, 327, 23, 318, 7, 4, 200, 3, 189]
 let news = [];
 let topics = [];
-
-let sitemap;
 
 const client = new pg.Pool({
 	user: process.env.DB_USER,
@@ -65,16 +60,6 @@ app.use('/assets', express.static(__dirname + '/src/assets'));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-app.get('/sitemap', async (req, res) => {
-	res.header('Content-Type', 'application/xml');
-	res.header('Content-Encoding', 'gzip');
-
-	if (sitemap) {
-		res.send(sitemap);
-		return;
-	}
-});
 
 app.get('/', (req, res) => {
 	if (port == 7860) {
@@ -265,10 +250,6 @@ app.post('/api/delete', async (req, res) => {
 
 app.listen(port, async () => {
 	console.log(`Server running on port ${port}`);
-
-	setIntervalAndExecute(async () => {
-		await createSitemap();
-	}, 60000 * 10);
 
 	if (process.argv[2] != "dev") {
 		start();
@@ -644,30 +625,4 @@ async function gemini(prompt, retry = 0) {
 
 async function delay(ms) {
 	return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-async function createSitemap() {
-	try {
-		const smStream = new SitemapStream({ hostname: 'https://newsgaki.com/', xlmns: { news: true, image: true } });
-		const pipeline = smStream.pipe(createGzip());
-
-		// pipe your entries or directly write them.
-		smStream.write({ url: '/', changefreq: 'daily', priority: 1 });
-
-		// Get all articles id and date
-		let query = "SELECT id, date FROM news";
-		let response = await queryDB(query, []);
-		let articles = response.rows;
-
-		for (let article of articles) {
-			smStream.write({ url: `/article/${article.id}`, changefreq: 'daily', priority: 0.9, lastmod: new Date(Number(article.date)).toISOString()});
-		}
-
-		smStream.end();
-
-		// cache the response
-		sitemap = await streamToPromise(pipeline);
-	} catch (e) {
-		console.error(e)
-	}
 }
