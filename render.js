@@ -55,6 +55,27 @@ app.get('/sitemap', async (req, res) => {
 	}
 });
 
+app.get('/admin', (req, res) => {
+	res.sendFile(__dirname + '/src/admin.html');
+});
+
+app.get('/allcomments', async (req, res) => {
+	let query = "SELECT * FROM comment ORDER BY date DESC";
+	let response = await queryDB(query, []);
+
+	res.send(response.rows);
+});
+
+// Route old article links
+app.get('/article', async (req, res) => {
+	if (!req.query.id || req.query.id.length != 10) {
+		res.redirect('/');
+	}
+	else {
+		res.redirect(`/article/${req.query.id}`);
+	}
+});
+
 app.get('/article/:id', async (req, res) => {
 	if(!req.params.id || req.params.id.length != 10) {
 		res.send('Invalid ID');

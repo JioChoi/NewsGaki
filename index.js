@@ -78,10 +78,6 @@ app.get('/article', (req, res) => {
 	res.sendFile(__dirname + '/src/article.html');
 });
 
-app.get('/admin', (req, res) => {
-	res.sendFile(__dirname + '/src/admin.html');
-});
-
 app.get('/api/article/:id', async (req, res) => {
 	let id = req.params.id;
 	if (id == undefined || id.length != 10) {
@@ -123,13 +119,6 @@ app.post('/api/reportlist', async (req, res) => {
 
 	let query = "SELECT * FROM news ORDER BY report DESC OFFSET $1 LIMIT $2";
 	let response = await queryDB(query, [start, size]);
-
-	res.send(response.rows);
-});
-
-app.get('/allcomments', async (req, res) => {
-	let query = "SELECT * FROM comment ORDER BY date DESC";
-	let response = await queryDB(query, []);
 
 	res.send(response.rows);
 });
@@ -206,6 +195,10 @@ app.get('/api/comments/:id', async (req, res) => {
 	let query = "SELECT * FROM comment WHERE id = $1 ORDER BY date ASC";
 	let response = await queryDB(query, [id]);
 	res.send(response.rows);
+});
+
+app.get('/admin', (req, res) => {
+	res.sendFile(__dirname + '/src/admin.html');
 });
 
 app.post('/api/report', async (req, res) => {
