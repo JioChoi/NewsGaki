@@ -420,13 +420,12 @@ async function getNewTopics() {
 
 		console.log("Running Gemini...");
 		let prompt = [
-			{ text: `input: Give me the number of five news articles that would get most views. Do not choose news with individual's name or group's name in the title. Give me only the list numbers in one line.\n0. 캐즘 넘겠다 기아 500㎞ 달리는 소형 전기차 EV3 출\n1. [만평] 조기영의 세상터치 2024년 5월 24\n2. 유럽은 먼저 내린다... 금리 각자도생, 고민 깊어진 한\n3. 올림픽 금메달리스트 김동성 근황… 포크레인에 앉아 햄버거 꿀맛\n4. “오전 반차 내고 갔는데 다팔렸네”…‘선재 업고 튀어’에 난리난 이 \n5. YTN 최대주주 변경 집행정지 신청, 항소심도 기\n6. [이슈플러스] 축구협회, 2연속 임시 감독 체제...손흥민 시간 걸릴 수밖에\n7. 자기 공 쳤는데…박성제, 오구플레이로 실\n8. 뒷자리 여성, 백미러로 힐끔힐끔…음란행위 딱 걸린 택시기\n9. 봉합술 받았는데 왜 수술보험금 거절…약관상 수술 해당해\n10. [ALC] 스타트업 대표 5인, “더 나은 미래 위해...사회 문제 해결에 도움 주고파\n11. 골프장 예약플랫폼 인기…회원수 230만명 넘은 곳\n12. 국순당, ‘2024 조형아트 서울’에 막걸리 협\n13. 文 만난 황우여 “손잡고 나랏일 같이 하자는 얘기 나눠\n14. 음주사고 후 편의점 들러 소주 ‘꿀꺽꿀꺽’… ‘후행음주 꼼수’ 못 막\n15. 추경호, 與 의원들에 편지...특검 아닌 공수처 수사 지켜봐야\n16. 아이와 함께 하는 첫 시즌 즐거워…단순하게 가운데로 치는데 집중 [강혜원의 골프플래닛\n17. 황우여, 민주당에 노무현 꿈꾼 타협의 정치 함께 실행하자\n18. [단독] SKC, 미국서 보조금 1000억 받는다…한국 반도체 소부장 최\n19. 스토킹 고소에 앙심...전 여친 흉기 인질극 벌인 20대 중\n20. 與 신동욱 VIP 격노설? 대통령이 격노하면 안 되나\n21. 서울대 총장 N번방 사건에 큰 책임감... 신고센터 만들 것\n22. 박근혜 전 대통령 최측근 정호성, 대통령실 비서관으\n23. EV3 드디어 베일 벗었다…보조금 적용 시 3천만원 중반대 가능\n24. [오늘의 arte] 아르떼TV 핫클립 : 피아니스트 아서 그린\n` },
-			{text: "output: 0, 2, 4, 8, 11"},
-			{text: `input: Give me the number of five news articles that would get most views. Do not choose news with individual's name or group's name in the title. Give me only the list numbers in one line.\n${newsStr}` },
+			{text: "input: Give me five newsworthy articles. Do not choose any news that includes individual's name or political groups. Choose articles only about events. Do not choose articles about products. Do not give reasonings. Do not choose duplicate articles.\n\n0. 대환대출 미끼로 4천여만 원 가로챈 일당 송치\n1. 러시아 위협에 징병제 되살리는 유럽…'남녀 모두 의무복무'\n2. 방심위, ‘김정은 찬양가’ 영상 33건 추가 접속차단 의결\n3. 중랑, 커피 찌꺼기로 어르신 일자리 만든 비법은\n4. 일본 차 탄다는 이유로...정체불명 남성이 꽂은 '황당 쪽지' [지금이뉴스]\n5. 특검 재표결 D-1 신경전...원내대표 회동 '합의 불발'\n6. 한경협, \"한국은 선진시장 관찰대상국에 올릴 이유 충분\"...MSCI에 서한 전달\n7. 선린대 응급구조과, '수상인명구조요원 자격증' 수료자 전원 취득\n8. [정영오 칼럼] 용산에 레드팀을 꾸려라\n9. \"슬리퍼로 구조 동물 때렸다\"… 카라 동물 관리자 10년간 상습 폭행 의혹\n10. “2000명 이상 매몰, 시신 수습은 6구”… 파푸아뉴기니 최악 산사태\n11. 미디어 컨설팅사 참컴, 미국 법인 설립…“현지 마케팅·미디어 서비스 시작”\n12. 이른 무더위, 자 떠나자!…얼리버드족은 벌써 휴가 예약하네\n13. 가족·지인 보험 가입시켜 수수료 챙기는 GA·설계사... 철퇴 맞는다\n14. 아워홈 “우리집에 왜 왔니” 임직원 가족과 만나 소통\n15. 강형욱 “레오, 사무실서 안락사”에 불붙은 ‘출장 안락사’ 논란\n16. 또다시 ‘암흑의 5월’...1년 만에 ‘감독 퇴진’ 카드 다시 꺼낸 한화, 성적 반등 가능할까\n17. 日銀 총재 “2% 물가 목표 실현”…10년물 국채금리 12년 만에 최고\n18. 대법 “유사수신행위 투자 배당금, 무조건 무효 아냐”\n19. '백두대간 글로벌 시드볼트' 영문 홈페이지 개편\n20. '채권왕' 그로스 \"트럼프가 바이든보다 채권 시장에 더 나빠\"\n21. 한국공대 ‘K-하이테크 플랫폼’ 2년 연속 우수기관 선정\n22. 돈 대신 쌀·보리로 지지 호소?...진보당 선거운동원들 벌금형\n23. “초등생 자녀·치매 부모 혼자 돌봐야”…고령화에 신음하는 日\n24. [부고] 구본용(한국고용정보원 홍보팀장)씨 모친상\n25. 세븐틴 호시, 50억 아파트 최연소 매수…유재석·한효주와 이웃사촌\n26. 의대 증원 여파? 6모 ‘N수생’ 지원자 최다…재학생도 1만명 늘어\n27. 친구 얼굴에 비닐봉지 씌우고 폭행·소변 본 10대들, 법원 “장난감에 불과했냐” 분노\n28. [포토] 에스파 카리나 '신나는 무대'\n29. 이창건 상무 \"하이오더, 테이블 오더 시장 신무기\"\n30. [대구] 대구 국가산단에 '정밀가공 종합 기술지원 센터' 준공\n31. 법사위원장 거론되던 추미애, 돌연 “국방위 가겠다”…알고보니 이 노림수\n32. 염기훈 감독의 ‘길바닥 사퇴’…팬들의 ‘버스 가로막기’ 위험 수위 넘었다\n33. 임태희 교육감 “경기교육 발전 위해 청년 공무원 패기 필요”\n34. 부모에게 흉기 휘두른 20대 아들 체포\n35. 기업 성장 동력으로 떠오른 '지속가능성'\n36. 친구 머리에 비닐봉지 씌우고 폭행한 10대들\n37. 北, 군사정찰위성 발사 임박...\"다음 달 4일까지 발사\" 통보\n38. 국내외 정상급 스트리트 댄서들 광주에 모인다\n39. 10년 만의 '판사 증원' 물거품 되나…정쟁에 밀린 판사 정원법\n40. 판도라 상자 열리나…휴대폰 ‘비번’ 알려주지 않은 김호중, 구속되자 한 말\n41. 제9차 한중일 정상회의 공동선언... “3국 FTA 협상에 속도” [전문]"},
+    		{text: "output: - 10. “2000명 이상 매몰, 시신 수습은 6구”… 파푸아뉴기니 최악 산사태\n- 17. 日銀 총재 “2% 물가 목표 실현”…10년물 국채금리 12년 만에 최고\n- 19. '백두대간 글로벌 시드볼트' 영문 홈페이지 개편\n- 27. 친구 얼굴에 비닐봉지 씌우고 폭행·소변 본 10대들, 법원 “장난감에 불과했냐” 분노\n- 30. [대구] 대구 국가산단에 '정밀가공 종합 기술지원 센터' 준공"},
+    		{text: `input: Give me five newsworthy articles. Do not choose any news that includes individual's name or political groups. Choose articles only about events. Do not choose articles about products. Do not give reasonings. Do not choose duplicate articles.\n\n${newsStr}`},
 			{text: "output: "},
 		];
 		let response = await gemini(prompt);
-
 		console.log(response);
 
 		if (response == null) {
@@ -434,17 +433,27 @@ async function getNewTopics() {
 		}
 	
 		console.log("Processing Results...");
-		if (!response.includes(',')) {
-			throw new Error("Gemini did not return a valid response.");
+		response = response.split('\n');
+		response = response.filter(item => item.length > 1);
+
+		if (response.length != 5) {
+			throw new Error("Gemini returned less than 5 results.");
 		}
-		response = response.split(',');
-		response = response.map(item => parseInt(item));
-		
-		console.log(`${response.length} new topics found!`);
+
+		for (let i = 0; i < response.length; i++) {
+			let dotIndex = response[i].indexOf('.');
+			if(dotIndex == -1 || response[i].substring(0, 2) != '- ') {
+				throw new Error("Gemini returned invalid result.");
+			}
+
+			response[i] = response[i].substring(2, dotIndex);
+		}
 		
 		topics = [];
 		for (let i of response) {
-			topics.push(news[i]);
+			if (news[i] != undefined) {
+				topics.push(news[i]);
+			}
 		}
 
 		console.log(topics);
