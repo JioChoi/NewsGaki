@@ -348,6 +348,23 @@ async function generateArticle(url) {
 		console.log(id);
 		console.log(title);
 
+		// Generate fake comments
+		let comments = Math.floor(Math.random() * 6);
+		for (let i = 0; i < comments; i++) {
+			let waitTime = Math.floor(Math.random() * 1000 * 60 * 3);
+
+			setTimeout(async () => {
+				let name = crypto.randomBytes(4).toString('hex');
+				let query = "INSERT INTO comment (id, name, comment, date) VALUES ($1, $2, $3, $4)";
+				let time = date + waitTime;
+
+				await queryDB(query, [id, name, "허접♡", time]);
+
+				query = "UPDATE news SET comment = comment + 1 WHERE id = $1";
+				await queryDB(query, [id]);
+			}, waitTime);
+		}
+
 		console.log("Uploaded to DB!");
 	} catch (e) {
 		console.log("Error in generateArticle()");
@@ -448,7 +465,7 @@ async function getNewTopics() {
 
 			response[i] = response[i].substring(2, dotIndex);
 		}
-		
+
 		topics = [];
 		for (let i of response) {
 			if (news[i] != undefined) {
