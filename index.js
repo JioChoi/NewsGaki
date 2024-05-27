@@ -342,7 +342,7 @@ async function generateArticle(url) {
 		console.log(title);
 
 		// Generate fake comments
-		let comments = Math.floor(Math.random() * 10) + 4;
+		let comments = Math.floor(Math.random() * 4) + 3;
 		for (let i = 0; i < comments; i++) {
 			let waitTime = Math.floor(Math.random() * 1000 * 60 * 3);
 
