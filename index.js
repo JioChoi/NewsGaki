@@ -315,6 +315,10 @@ async function generateArticle(url) {
 		}
 
 		let img = await getPhoto(img_prompt);
+		if (img.includes("1495020689067-958852a7765e")) {
+			console.log("Trash article. Skipping...");
+			return;
+		}
 
 		response = response.split('\n');
 		response = response.filter(item => item.length > 1);
@@ -344,7 +348,7 @@ async function generateArticle(url) {
 		// Generate fake comments
 		let comments = Math.floor(Math.random() * 4) + 3;
 		for (let i = 0; i < comments; i++) {
-			let waitTime = Math.floor(Math.random() * 1000 * 60 * 3);
+			let waitTime = Math.floor(Math.random() * 1000 * 60 * 10);
 
 			setTimeout(async () => {
 				let name = crypto.randomBytes(4).toString('hex');
