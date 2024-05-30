@@ -66,6 +66,17 @@ app.get('/allcomments', async (req, res) => {
 	res.send(response.rows);
 });
 
+app.get('/goodcomments', async (req, res) => {
+	let query = "SELECT * FROM comment WHERE comment != '허접♡' ORDER BY date DESC";
+	let response = await queryDB(query, []);
+
+	// only comments
+	response = response.rows.map(comment => comment.comment);
+	response = response.join('<br>');
+
+	res.send(response);
+});
+
 // Route old article links
 app.get('/article', async (req, res) => {
 	if (!req.query.id || req.query.id.length != 10) {
