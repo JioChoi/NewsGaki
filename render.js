@@ -71,10 +71,13 @@ app.get('/goodcomments', async (req, res) => {
 	let response = await queryDB(query, []);
 
 	// only comments
-	response = response.rows.map(comment => comment.comment);
-	response = response.join('<br>');
+	let buffer = "";
 
-	res.send(response);
+	for (let comment of response.rows) {
+		buffer += `<a href="/article/${comment.id}">${comment.comment}</a><br><br>`;
+	}
+
+	res.send(buffer);
 });
 
 // Route old article links
@@ -127,6 +130,8 @@ app.get('/article/:id', async (req, res) => {
 		article = article.replaceAll('♡♡', '♡');
 		article = article.replaceAll('♡♡♡', '♡');
 		article = article.replaceAll('♡.', '♡');
+		article = article.replaceAll('.♡', '♡');
+		article = article.replaceAll('허허, ', '');
 		data = data.replaceAll('${description}', article.replaceAll('\n', ' '));
 
 		article = article.replaceAll('♡', '<span class="hearts" onclick="heart(this)">&#9825;</span>');
