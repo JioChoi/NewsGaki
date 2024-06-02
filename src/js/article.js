@@ -156,8 +156,14 @@ function capture() {
 	content.querySelector('.reaction').remove();
 	content.style.border = 'none';
 	content.style.margin = '0px';
-	element.appendChild(content);
+	let img = content.querySelector('img');
+	img.style.backgroundImage = `url(${img.src})`;
+	img.style.backgroundSize = 'cover';
+	img.style.backgroundPosition = 'center';
+	img.src = 'https://newsgaki.com/assets/empty.png';
 
+	element.appendChild(content);
+	
 	element.style.position = 'absolute';
 	element.style.top = '0px';
 	element.style.left = '0px';
