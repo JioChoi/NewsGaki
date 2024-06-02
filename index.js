@@ -215,6 +215,16 @@ app.post('/api/report', async (req, res) => {
 	let query = "UPDATE news SET report = report + 1 WHERE id = $1";
 	await queryDB(query, [id]);
 
+	query = "SELECT report FROM news WHERE id = $1";
+	let response = await queryDB(query, [id]);
+	if (response.rows[0].report >= 5) {
+		query = "DELETE FROM news WHERE id = $1";
+		await queryDB(query, [id]);
+
+		query = "DELETE FROM comment WHERE id = $1";
+		await queryDB(query, [id]);
+	}
+
 	res.send("Reported!");
 });
 

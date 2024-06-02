@@ -135,31 +135,48 @@ function report() {
 	}
 }
 
+function share() {
+	if (!navigator.share) {
+		navigator.clipboard.writeText(url.innerText);
+		alert('게시글 주소가 복사되었습니다.');
+		return;
+	}
+
+	window.navigator.share({
+		title: document.getElementById('title').innerText,
+		url: window.location.href
+	});
+}
+
 function capture() {
-	let content = document.createElement('div');
-	content.appendChild(document.getElementsByClassName('header')[0].cloneNode(true));
-	content.appendChild(document.getElementById('content').cloneNode(true));
+	let element = document.createElement('div');
+	element.appendChild(document.getElementsByClassName('header')[0].cloneNode(true));
+	
+	let content = document.getElementById('content').cloneNode(true);
+	content.querySelector('.reaction').remove();
+	content.style.border = 'none';
+	content.style.margin = '0px';
+	element.appendChild(content);
 
-	content.style.position = 'absolute';
-	content.style.top = '0px';
-	content.style.left = '0px';
-	content.style.zIndex = '-1';
+	element.style.position = 'absolute';
+	element.style.top = '0px';
+	element.style.left = '0px';
+	element.style.zIndex = '-1';
 
-	content.style.width = '450px';
+	element.style.width = '450px';
 
-	document.body.prepend(content);
+	document.body.prepend(element);
 
-	html2canvas(content, {
-		scale: 2
+	html2canvas(element, {
+		scale: 2,
+		proxy: `${host}/api/proxy`
 	}).then(canvas => {
 		let link = document.createElement('a');
-		link.download = 'capture.png';
+		link.download = `뉴스가키 - ${document.getElementById('title').innerText}.png`;
 
-		content.remove();
+		element.remove();
 
-		canvas.toBlob((blob) => {
-			link.href = URL.createObjectURL(blob);
-			window.open(link.href);
-		});
+		link.href = canvas.toDataURL('image/png');
+		link.click();
 	});
 }
