@@ -10,6 +10,7 @@ const { JSDOM } = require('jsdom');
 const pg = require('pg');
 const express = require('express');
 const crypto = require('crypto');
+const proxy = require('html2canvas-proxy');
 
 dotenv.config();
 
@@ -60,6 +61,8 @@ app.use('/assets', express.static(__dirname + '/src/assets'));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.use('/api/proxy', proxy());
 
 app.get('/', (req, res) => {
 	if (port == 7860) {

@@ -20,66 +20,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 		alert('게시글 주소가 복사되었습니다.');
 	});
 
-	document.getElementById('report').addEventListener('click', () => {
-		let yes = confirm('해당 게시글을 신고하시겠습니까?');
-		if (yes) {
-			fetch(`${host}/api/report`, {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify({
-					id: id
-				})
-			});
-			alert('신고가 접수되었습니다.');
-		}
-	});
-
-	document.getElementById('like').addEventListener('click', async () => {
-		if (window.localStorage.getItem(id) == 'true') {
-			alert('이미 반응하셨습니다.')
-			return;
-		}
-
-		window.localStorage.setItem(id, 'true');
-
-		let response = await fetch(`${host}/api/react`, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({
-				id: id,
-				reaction: 'like'
-			})
-		});
-		response = await response.json();
-		document.getElementById('like_count').innerText = response.likes;
-	});
-
-	document.getElementById('dislike').addEventListener('click', async () => {
-		if (window.localStorage.getItem(id) == 'true') {
-			alert('이미 반응하셨습니다.')
-			return;
-		}
-		
-		window.localStorage.setItem(id, 'true');
-
-		let response = await fetch(`${host}/api/react`, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({
-				id: id,
-				reaction: 'dislike'
-			})
-		});
-		response = await response.json();
-		document.getElementById('dislike_count').innerText = response.dislikes;
-	});
-
 	document.getElementById('edit').addEventListener('input', () => {
 		document.getElementById('edit').style.height = 'auto';
 		document.getElementById('edit').style.height = document.getElementById('edit').scrollHeight - 20 + 'px';
@@ -177,6 +117,22 @@ async function submit() {
 	loadComments();
 
 	document.getElementById('edit').value = '';
+}
+
+function report() {
+	let yes = confirm('해당 게시글을 신고하시겠습니까?');
+	if (yes) {
+		fetch(`${host}/api/report`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				id: id
+			})
+		});
+		alert('신고가 접수되었습니다.');
+	}
 }
 
 function capture() {

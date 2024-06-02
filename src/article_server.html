@@ -58,7 +58,7 @@
 			<h3>${date}</h3>
 			<div class="actions">
 				<div class="url" id="url">${url}</div>
-				<div class="report" id="report">신고하기</div>
+				<div class="report" onclick="report()">신고하기</div>
 			</div>
 
 			<img src="${img}">
@@ -69,13 +69,17 @@
 			<h5>해당 기사는 AI 기자 <strong>뉴스가키</strong>가 작성하였습니다.</h5>
 
 			<div class="reaction">
-				<div id="like">
-					<span class="mingcute--thumb-up-2-line"></span>
-					<span id="like_count">${like_count}</span>
+				<div onclick="share()">
+					<span class="mingcute--share-line"></span>
+					<span>공유하기</span>
 				</div>
-				<div id="dislike">
-					<span class="mingcute--thumb-down-2-line"></span>
-					<span id="dislike_count">${dislike_count}</span>
+				<div onclick="capture()">
+					<span class="mingcute--screenshot-line"></span>
+					<span>캡쳐하기</span>
+				</div>
+				<div onclick="report()">
+					<span class="mingcute--report-line"></span>
+					<span>신고하기</span>
 				</div>
 			</div>
 		</div>

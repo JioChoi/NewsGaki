@@ -91,8 +91,8 @@ app.get('/article', async (req, res) => {
 });
 
 app.get('/article/:id', async (req, res) => {
-	if(!req.params.id || req.params.id.length != 10) {
-		res.send('Invalid ID');
+	if (!req.params.id || req.params.id.length != 10) {
+		res.redirect('/');
 		return;
 	}
 
@@ -105,7 +105,7 @@ app.get('/article/:id', async (req, res) => {
 		let query = 'SELECT * FROM news WHERE id = $1';
 		let response = await queryDB(query, [req.params.id]);
 		if (!response || response.rows.length == 0) {
-			res.send('Invalid ID');
+			res.redirect('/');
 			return;
 		}
 
