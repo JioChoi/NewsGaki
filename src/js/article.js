@@ -178,3 +178,32 @@ async function submit() {
 
 	document.getElementById('edit').value = '';
 }
+
+function capture() {
+	let content = document.createElement('div');
+	content.appendChild(document.getElementsByClassName('header')[0].cloneNode(true));
+	content.appendChild(document.getElementById('content').cloneNode(true));
+
+	content.style.position = 'absolute';
+	content.style.top = '0px';
+	content.style.left = '0px';
+	content.style.zIndex = '-1';
+
+	content.style.width = '450px';
+
+	document.body.prepend(content);
+
+	html2canvas(content, {
+		scale: 2
+	}).then(canvas => {
+		let link = document.createElement('a');
+		link.download = 'capture.png';
+
+		content.remove();
+
+		canvas.toBlob((blob) => {
+			link.href = URL.createObjectURL(blob);
+			window.open(link.href);
+		});
+	});
+}
