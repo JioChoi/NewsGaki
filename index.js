@@ -274,6 +274,7 @@ async function start() {
 		await generateArticle(topics[0].url);
 		console.log("Finished one article!");
 		topics.shift();
+		
 		if (topics.length == 0) {
 			console.log("Getting new topics...");
 			await getNewTopics();
