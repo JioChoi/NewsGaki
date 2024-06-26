@@ -211,7 +211,7 @@ async function createSitemap() {
 		let articles = response.rows;
 
 		for (let article of articles) {
-			smStream.write({ url: `/article/${article.id}`, changefreq: 'daily', priority: 0.9, lastmod: new Date(Number(article.date)).toISOString()});
+			smStream.write({ url: `/article/${article.id}`, changefreq: 'daily', priority: 0.7, lastmod: new Date(Number(article.date)).toISOString()});
 		}
 
 		smStream.end();
