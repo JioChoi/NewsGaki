@@ -132,13 +132,11 @@ app.get('/article/:id', async (req, res) => {
 		article = article.replaceAll('♡.', '♡');
 		article = article.replaceAll('.♡', '♡');
 		article = article.replaceAll('허허, ', '');
-		data = data.replaceAll('${description}', article.replaceAll('
-', ' '));
+		data = data.replaceAll('${description}', article.replaceAll('\n', ' '));
 
 		article = article.replaceAll('♡', '<span class="hearts" onclick="heart(this)">&#9825;</span>');
 
-		article = article.split('
-');
+		article = article.split('\n');
 		let content = '';
 		for (let line of article) {
 			content += `<p>${line}</p>`;
