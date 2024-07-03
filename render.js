@@ -111,7 +111,7 @@ app.get('/article/:id', async (req, res) => {
 
 		// Load Article
 		data = data.replaceAll('${title}', response.rows[0].title);
-		data = data.replaceAll('${date}', getDateString(response.rows[0].date));
+		data = data.replaceAll('${date}', response.rows[0].date);
 		data = data.replaceAll('${url}', 'https://newsgaki.com/article/' + response.rows[0].id);
 		data = data.replaceAll('${img}', response.rows[0].img);
 		data = data.replaceAll('${like_count}', response.rows[0].likes);

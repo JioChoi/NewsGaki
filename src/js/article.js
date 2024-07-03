@@ -13,6 +13,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 	console.log("DOM LOADED!!!");
 	id = window.location.pathname.split('/')[2];
 
+	document.getElementById('date').innerHTML = getDateString(Number(document.getElementById('date').innerHTML));
+
 	loadComments();
 
 	document.getElementById('url').addEventListener('click', () => {
