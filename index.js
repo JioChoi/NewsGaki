@@ -65,21 +65,9 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/api/proxy', proxy());
 
 app.get('/', (req, res) => {
-	if (port == 7860) {
-		res.send("Server running on port 7860!");
-	}
-	else {
-		res.sendFile(__dirname + '/src/index.html');
-	}
+	res.send("Server running on port 7860!");
 });
 
-app.get('/info', (req, res) => {
-	res.sendFile(__dirname + '/src/info.html');
-});
-
-app.get('/article', (req, res) => {
-	res.sendFile(__dirname + '/src/article.html');
-});
 
 app.get('/api/article/:id', async (req, res) => {
 	let id = req.params.id;
