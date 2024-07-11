@@ -217,7 +217,7 @@ app.post('/api/report', async (req, res) => {
 
 	query = "SELECT report FROM news WHERE id = $1";
 	let response = await queryDB(query, [id]);
-	if (response.rows[0].report >= 5) {
+	if (response.rows[0].report >= 1) {
 		query = "DELETE FROM news WHERE id = $1";
 		await queryDB(query, [id]);
 
