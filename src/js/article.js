@@ -13,7 +13,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 	console.log("DOM LOADED!!!");
 	id = window.location.pathname.split('/')[2];
 
-	document.getElementById('date').innerHTML = getDateString(Number(document.getElementById('date').innerHTML));
+	let date = new Date(Number(document.getElementById('date').innerText));
+	document.getElementById('date').innerText = getDateString(Number(document.getElementById('date').innerText));
 
 	loadComments();
 
