@@ -96,7 +96,7 @@ app.get('/article/:id', async (req, res) => {
 		return;
 	}
 
-	fs.readFile(__dirname + '/src/.html', 'utf8', async (err, data) => {
+	fs.readFile(__dirname + '/src/article.html', 'utf8', async (err, data) => {
 		if (err) {
 			console.log(err);
 			res.send('Error');
