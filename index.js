@@ -358,7 +358,7 @@ async function generateArticle(url) {
 
 async function generateImage(content) {
 	const prompt = [
-		{text: "Give me one broad keyword from this news article. Only give me the keyword."},
+		{text: "Give me one broad keyword in English from this news article. Only give me the keyword."},
 		{text: "input: " + content},
 		{text: "output: "},
 	];
@@ -379,7 +379,7 @@ async function generateImage(content) {
 		}
 	}
 	
-	return [image, response];
+	return image;
 }
 
 /* Image Generation */
