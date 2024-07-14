@@ -251,16 +251,15 @@ app.listen(port, async () => {
 
 /* Automation */
 let ids = [8, 38, 33, 17, 49, 327, 23, 318, 7, 4, 200, 3, 189]
-let newsDB = [];
+let previousNews = [];
 let news = [];
 let topics = [];
 
 async function start() {
 	console.log("Starting Automation...");
 
-	setIntervalAndExecute(updateNewsDB, 1000 * 60);
-	setInterval(updateTopics, 1000 * 60 * 10);
-	setInterval(createNews, 1000 * 60 * 2);
+	setIntervalAndExecute(updateTopics, 1000 * 60 * 10);
+	setIntervalAndExecute(createNews, 1000 * 60 * 2, 10000);
 }
 
 async function createNews() {
@@ -452,71 +451,24 @@ async function getFlickrImage(query, size = 10) {
 	}
 }
 
-async function updateNewsDB() {
+async function updateTopics() {
+	topics = [];
+	
 	await getAllNews();
 	await removeOldNews(10);
 
-	// Sort by page view
-	news.sort((a, b) => {
-		return b.pv - a.pv;
-	});
-
-	// Remove news with less than 30 page views
-	for (let i = 0; i < news.length; i++) {
-		if(news[i].pv < 50) {
-			news.splice(i, 1);
-			i--;
-		}
-	}
-
-	// Remove duplicate news
-	for (let i = 0; i < news.length; i++) {
-		for (let j = 0; j < newsDB.length; j++) {
-			if (news[i].title == newsDB[j].title) {
-				news.splice(i, 1);
-				i--;
-				break;
-			}
-		}
-	}
-
-	// Add to NewsDB
-	newsDB = newsDB.concat(news);
-
-	// Remove old news in DB
-	let currentTime = Date.now();
-	for (let i = 0; i < newsDB.length; i++) {
-		if (currentTime - newsDB[i].date >= 1000 * 60 * 30) {
-			newsDB.splice(i, 1);
-			i--;
-		}
-	}
-
-	console.log("DB Updated!");
-}
-
-async function updateTopics() {
-	let temp = [];
-
-	let currentTime = Date.now();
-	for (let i = 0; i < newsDB.length; i++) {
-		if(currentTime - newsDB[i].date < 1000 * 60 * 10) {
-			temp.push(newsDB[i]);
-		}
-	}
-
-	if (temp.length == 0) {
-		console.log("No topics found. Retrying in 10 minutes...");
-		return;
-	}
+	// Random order
+	news = news.sort(() => Math.random() - 0.5);
 	
 	// Gemini to remove political news
-	let json = JSON.stringify(temp);
+	let list = JSON.stringify(news);
+	let used = JSON.stringify(previousNews);
 
 	let prompt = [
-		{ text: "input: 한국인 정치인의 이름을 포함하는 기사는 제외해줘. Please give me results in json. Only output the json result.\n\n" + json },
+		{text: `input: 다음 뉴스 리스트중 헤드라인에 걸릴 뉴스들을 찾고싶어. 정치적인 뉴스나 특정 인물의 이름이 언급된 뉴스 기사는 제외해줘. JSON 으로 결과만 줘.\n\n${list}\n\n다음은 이전에 이미 사용한 뉴스 기사야. 아래 뉴스와 동일한 주제를 다루는 뉴스는 포함하지 말아줘.\n${used}`},
 		{ text: "output: " },
-	]
+	];
+	
 	let res = await gemini(prompt);
 
 	res = res.replaceAll('```', '');
@@ -531,8 +483,12 @@ async function updateTopics() {
 
 	console.log("Currently have " + topics.length + " topics!");
 	for(let i = 0; i < topics.length; i++) {
+		previousNews.push(topics[i]);
 		console.log(topics[i].title);
 	}
+
+	// Keep previous news length to 20
+	previousNews = previousNews.slice(-20);
 }
 
 async function getAllNews() {
@@ -591,9 +547,11 @@ async function removeOldNews(min) {
 	}
 }
 
-function setIntervalAndExecute(fn, t) {
-    fn();
-    return(setInterval(fn, t));
+function setIntervalAndExecute(fn, t, wait = 0) {
+	setTimeout(() => {
+		fn();
+		setInterval(fn, t);
+	}, wait);
 }
 
 /* DB */
