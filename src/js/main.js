@@ -2,6 +2,8 @@ const frames = 479;
 let startAnime = false;
 let i = 0;
 
+let data = [];
+
 window.addEventListener('DOMContentLoaded', async function() {
 	document.body.classList.add('noscroll');
 	let [text, day] = await getDaily();
@@ -42,10 +44,14 @@ window.addEventListener('DOMContentLoaded', async function() {
 
 	let interval = setInterval(() => {
 		if (startAnime) {
-			const img = document.getElementById('saki_panel');
+			const canvas = document.getElementById('saki_panel');
+			const ctx = canvas.getContext('2d');
 			const f = frames - Math.abs((frames - 1) - i) - 1;
 
-			img.src = `/assets/saki/compressed/${f + 1}.webp`;
+			canvas.width = 752;
+			canvas.height = 1360;
+			ctx.clearRect(0, 0, canvas.width, canvas.height);
+			ctx.drawImage(data[f], 0, 0, canvas.width, canvas.height);
 
 			i++;
 			if (i >= frames * 2 - 2) {
@@ -114,11 +120,13 @@ async function typeWriter(text, speed) {
 }
 
 async function loadAssets() {
+	data = [];
 	let loaded = 0;
 
 	for(let i = 0; i < frames; i++) {
 		let img = new Image();
-		img.src = `/assets/saki/compressed/${i + 1}.webp`;
+		img.src = `https://huggingface.co/Jio7/NewsGaki/resolve/main/${i+1}.webp`;
+		data.push(img);
 
 		img.onload = () => {
 			loaded++;

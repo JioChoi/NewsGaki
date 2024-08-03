@@ -129,6 +129,8 @@
 	bottom: 0px;
 	height: 80vh;
 
+	aspect-ratio: 752/1360;
+
 	user-select: none;
 	-webkit-user-drag: none;
 	-webkit-user-select: none;
