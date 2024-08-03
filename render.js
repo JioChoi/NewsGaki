@@ -8,7 +8,11 @@ const { SitemapStream, streamToPromise } = require('sitemap');
 const { createGzip } = require('zlib');
 const { Readable } = require('stream');
 
+const crypto = require('crypto');
+const { type } = require('os');
+
 let sitemap;
+let maxDaily = 0;
 
 const client = new pg.Pool({
 	user: process.env.DB_USER,
@@ -45,6 +49,61 @@ app.get('/', (req, res) => {
 	res.sendFile(__dirname + '/src/index.html');
 });
 
+app.get('/test', (req, res) => {
+	res.sendFile(__dirname + '/src/test.html');
+});
+
+const key = process.env.DAILY_KEY;
+const iv = process.env.DAILY_IV;
+const garbage = process.env.DAILY_GARBAGE;
+
+let speech = [];
+
+app.post('/daily', async (req, res) => {
+	let date = new Date().toISOString().split('T')[0];
+	let data = req.body.data;
+
+	if(data == undefined) {
+		res.send('{}');
+		return;
+	}
+
+	if (data == '') {
+		let encrypted = encode({ date: date, today: 0, garbage: garbage });
+		let text = speech[0];
+
+		res.send({ encrypted: encrypted, text: text, day: 0 });
+		return;
+	}
+
+	let decrypted = decode(data);
+
+	if (decrypted.date == undefined) {
+		res.send('{}');
+		return;
+	}
+
+	if (decrypted.date != date) {
+		if (new Date(decrypted.date) < new Date(date)) {
+			decrypted.today++;
+			decrypted.date = date;
+			decrypted.garbage = garbage;
+
+			let encrypted = encode(decrypted);
+			let text = speech[decrypted.today];
+
+			if(maxDaily < decrypted.today) {
+				maxDaily = decrypted.today;
+			}
+
+			res.send({ encrypted: encrypted, text: text, day: decrypted.today });
+			return;
+		}
+	}
+
+	res.send('{}');
+});
+
 app.get('/sitemap', async (req, res) => {
 	res.header('Content-Type', 'application/xml');
 	res.header('Content-Encoding', 'gzip');
@@ -64,6 +123,10 @@ app.get('/allcomments', async (req, res) => {
 	let response = await queryDB(query, []);
 
 	res.send(response.rows);
+});
+
+app.get('/maxdaily', (req, res) => {
+	res.send({ max: maxDaily });
 });
 
 app.get('/goodcomments', async (req, res) => {
@@ -152,8 +215,11 @@ app.get('*', function(req, res) {
     res.redirect('/');
 });
 
-app.listen(80, () => {
+app.listen(80, async () => {
 	console.log('Server is running on port 80');
+
+	await initSpeech();
+	console.log(speech.length);
 
 	setIntervalAndExecute(async () => {
 		await createSitemap();
@@ -219,4 +285,35 @@ async function createSitemap() {
 	} catch (e) {
 		console.error(e)
 	}
+}
+
+function encode(data) {
+	data = JSON.stringify(data);
+
+	let cipher = crypto.createCipheriv('aes-256-cbc', key, iv);
+	let encrypted = cipher.update(data, 'utf8', 'base64');
+	encrypted += cipher.final('base64');
+
+	return encrypted;
+}
+
+function decode(data) {
+	try {
+		let decipher = crypto.createDecipheriv('aes-256-cbc', key, iv);
+		let decrypted = decipher.update(data, 'base64', 'utf8');
+		decrypted += decipher.final('utf8');
+	
+		decrypted = JSON.parse(decrypted);
+	
+		return decrypted;
+	} catch (e) {
+		return {};
+	}
+}
+
+function initSpeech() {
+	let data = fs.readFileSync(__dirname + '/src/speech.dat', 'utf8');
+
+	speech = decode(data);
+	speech = speech.data;
 }

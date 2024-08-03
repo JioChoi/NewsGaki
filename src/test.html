@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+	<style>
+		#img {
+			width: 300px;
+			user-select: none;
+			pointer-events: none;
+		}
+
+		video {
+			width: 300px;
+		}
+
+		body {
+			background-color: #ffffff;
+		}
+	</style>
+
+	<script src="https://cdn.jsdelivr.net/npm/unzipit@1.4.3/dist/unzipit.min.js"></script>
+</head>
+<body>
+	<script>
+		let data = [];
+		const frames = 479;
+		let startAnime = false;
+
+		window.onload = () => {
+			downloadAssets();
+		};
+
+		async function downloadAssets() {
+			data = [];
+			for(let i = 0; i < frames; i++) {
+				data.push(null);
+			}
+
+			let response = await fetch('https://huggingface.co/Jio7/NewsGaki/resolve/main/saki.zip');
+			response = await response.blob();
+
+			const {entries} = await unzipit.unzip(response);
+
+			for (const [name, entry] of Object.entries(entries)) {
+				if(name.endsWith('.webp')) {
+					const index = parseInt(name.split('/')[1].split('.')[0]) - 1;
+					const blob = await entry.blob();
+					data[index] = URL.createObjectURL(blob);
+				}
+			}
+
+			startAnime = true;
+		}
+
+		let counter = 0;
+		let i = 0;
+		setInterval(() => {
+			counter++;
+			if (startAnime) {
+				const img = document.getElementById('img');
+				const f = frames - Math.abs((frames - 1) - i) - 1;
+
+				if (data[f] !== null) {
+					img.src = data[f];
+				}
+
+				i++;
+				if (i >= frames * 2 - 2) {
+					i = 0;
+				}
+			}
+		}, 1000 / 50);
+
+		setInterval(() => {
+			console.log(counter);
+			counter = 0;
+		}, 1000)
+	</script>
+	<img id="img">
+</body>
+</html>

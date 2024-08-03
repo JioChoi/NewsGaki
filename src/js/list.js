@@ -1,7 +1,9 @@
 currentOffset = 10;
+listLoaded = false;
 
-addEventListener('DOMContentLoaded', () => {
-	updateList(0, 10, true);
+addEventListener('DOMContentLoaded', async () => {
+	await updateList(0, 10, true);
+	listLoaded = true;
 });
 
 async function updateList(start, size, emptyWhenUpdate = false) {
