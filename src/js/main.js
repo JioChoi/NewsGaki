@@ -18,8 +18,9 @@ window.addEventListener('DOMContentLoaded', async function() {
 
 	console.log(text);
 	await loadAssets();
-
+	
 	// Loaded
+	document.getElementById('daily').style.display = 'flex';
 	document.getElementById('main_loading').style.display = 'none';
 	document.getElementById('saki').style.display = 'flex';
 
