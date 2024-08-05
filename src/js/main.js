@@ -6,7 +6,7 @@ let data = [];
 
 window.addEventListener('DOMContentLoaded', async function() {
 	document.body.classList.add('noscroll');
-	let [text, day] = await getDaily();
+	let [text, day, encrypted] = await getDaily();
 
 	document.getElementById('day').textContent = `${day}일차`;
 
@@ -18,7 +18,7 @@ window.addEventListener('DOMContentLoaded', async function() {
 
 	console.log(text);
 	await loadAssets();
-	
+
 	// Loaded
 	document.getElementById('daily').style.display = 'flex';
 	document.getElementById('main_loading').style.display = 'none';
@@ -39,6 +39,7 @@ window.addEventListener('DOMContentLoaded', async function() {
 			await waitInput();
 		}
 
+		localStorage.setItem('daily', encrypted);
 		sakiOut();
 		clearInterval(interval);
 	}, 1500 + 100 + 400);
@@ -165,6 +166,5 @@ async function getDaily() {
 		return "";
 	}
 
-	localStorage.setItem('daily', response.encrypted);
-	return [response.text, response.day + 1]
+	return [response.text, response.day + 1, response.encrypted];
 }
