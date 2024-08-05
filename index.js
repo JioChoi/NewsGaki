@@ -271,6 +271,10 @@ async function createNews() {
 	let topic = topics.shift();
 	let url = topic.url;
 
+	console.log("🤖 Crawling article...");
+	console.log("🤖 Title: " + topic.title);
+	console.log("🤖 URL  : " + url);
+
 	generateArticle(url);
 }
 
@@ -473,8 +477,8 @@ async function updateTopics() {
 		}
 	}
 
-	if (news.length == 0) {
-		console.log("No new news.");
+	if (news.length < 3) {
+		console.log("🔍 No new news.");
 		return;
 	}
 	
@@ -503,7 +507,8 @@ async function updateTopics() {
 			news = JSON.parse(res);
 		} catch (e) {
 			console.log(res);
-			console.log("Error parsing Gemini result.");
+			console.log("🔍 Error parsing Gemini result.");
+			return;
 		}
 	}
 
@@ -523,14 +528,15 @@ async function updateTopics() {
 		res = JSON.parse(res);
 		topics = topics.concat(res);
 	} catch (e) {
-		console.log("Error parsing Gemini result.");
+		console.log("🔍 Error parsing Gemini result.");
 		return;
 	}
 
-	console.log("Currently have " + topics.length + " topics!");
+	console.log("🔍 Found " + topics.length + " topics!");
 	for(let i = 0; i < topics.length; i++) {
 		previousNews.push(topics[i]);
-		console.log(topics[i].title);
+		console.log("🔍 Title: " + topics[i].title);
+		console.log("🔍 URL  : " + topics[i].url);
 	}
 
 	// Keep previous news length to 20
