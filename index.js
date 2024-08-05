@@ -264,14 +264,14 @@ async function start() {
 
 async function createNews() {
 	if (topics.length == 0) {
-		console.log("🤖 Topics are empty");
+		console.log("\n🤖 Topics are empty");
 		return;
 	}
 
 	let topic = topics.shift();
 	let url = topic.url;
 
-	console.log("🤖 Selected a target!");
+	console.log("\n🤖 Selected a target!");
 	console.log("🤖 Title: " + topic.title);
 	console.log("🤖 URL  : " + url);
 
@@ -458,6 +458,7 @@ async function getFlickrImage(query, size = 10) {
 //  1.04 RPM
 
 async function updateTopics() {
+	console.log("\n🔍 Updating topics...");
 	topics = [];
 	
 	await getAllNews();
