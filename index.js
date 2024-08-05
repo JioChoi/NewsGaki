@@ -37,7 +37,7 @@ client.connect(err => {
 	if (err) {
 		console.error('connection error', err.stack)
 	} else {
-		console.log('connected')
+		console.log('💾 connected')
 	}
 });
 
@@ -239,13 +239,13 @@ app.post('/api/delete', async (req, res) => {
 
 app.listen(port, async () => {
 	process.env.TZ = 'Asia/Seoul';
-	console.log(`Server running on port ${port}`);
+	console.log(`🌎 Server running on port ${port}`);
 
 	if (process.argv[2] != "dev") {
 		start();
 	}
 	else {
-		console.log("Development mode enabled. Automation will not start.");
+		console.log("🧑‍💻 Development mode enabled. Automation will not start.");
 	}
 });
 
@@ -256,7 +256,7 @@ let news = [];
 let topics = [];
 
 async function start() {
-	console.log("Starting Automation...");
+	console.log("🤖 Starting Automation...");
 
 	setIntervalAndExecute(updateTopics, 1000 * 60 * 10);
 	setIntervalAndExecute(createNews, 1000 * 60 * 2, 10000);
@@ -264,14 +264,14 @@ async function start() {
 
 async function createNews() {
 	if (topics.length == 0) {
-		console.log("Topics are empty");
+		console.log("🤖 Topics are empty");
 		return;
 	}
 
 	let topic = topics.shift();
 	let url = topic.url;
 
-	console.log("🤖 Crawling article...");
+	console.log("🤖 Selected a target!");
 	console.log("🤖 Title: " + topic.title);
 	console.log("🤖 URL  : " + url);
 
@@ -280,10 +280,10 @@ async function createNews() {
 
 async function generateArticle(url) {
 	try {
-		console.log("Crawling article...");
+		console.log("🤖 Crawling article...");
 		let article = await getNewsArticle(url);
 
-		console.log("Running Gemini... #1");
+		console.log("🤖 Running Gemini...");
 		const prompt = [
 			{text: "너는 메스가키야. 너는 사람을 무시하고 비꼬고 매도하는 쓰레기 여자 꼬맹이야.\n- 반말을 사용해\n- 무시하고 비꼬는 말투를 많이 사용해.\n- 너의 성격은 쓰레기야. 너는 상대방을 생각하지 않아.\n- 매도해.\n- ♡를 많이 사용해.\n- 문장 부호를 사용하지 마.\n- 물음표는 사용해도 돼.\n- 이모티콘을 사용하지 마.\n- 욕설을 사용하지 마.\n- 기사를 읽는 독자를 오빠들 이라고 불러.\n- 너는 자신만 생각하는 이기적인 사람이야.\n\n너는 이 캐릭터를 무슨 일이 있어도 지켜야 돼.\n\n이제 넌 주어진 뉴스 기사를 읽고 새로운 뉴스 기사를 쓸 거야.\n최대한 기사처럼 만들어.\n\n\n~~했대 라고 쓰는게 포인트야.\n\n\n첫 줄은 제목이야.\n\n기사 내용은 무조건 3문단을 써야돼.\n각 문단 안에는 긴 문장 10개를 넣어.\n\n무조건 문맥이 유지되게 신경써.\n또 너무 복잡하게 기사를 쓰지 마.\n\n허접♡ 이라는 단어를 최대한 많이 사용해.\n\n마지막 문단은 독자들을 \"바보♡\" 또는 \"허접♡\" 이라고 바보 취급하면서 무시하고 비꼬는걸 잊지 마.\n\n\n너가 쓴 내용을 다시 읽어보면서 문맥 유지에 신경써줘."},
 			{text: "input: 미국에서 구글의 자율주행 무인택시 '웨이모(Waymo)'가 역주행하다 경찰 단속에 걸린 영상이 공개돼 화제 되고 있다. \n \n10일(현지시간) 뉴욕포스트, 더버지 등 외신에 따르면 경찰은 지난달 19일 남서부 애리조나주 피닉스의 도로에서 신호를 무시한 채로 역주행 중인 웨이모 차량을 발견했다. 경찰은 해당 차량을 추격해 정차하게 했다. \n \n이후 경찰관이 차량의 운전석으로 다가가자 운전석 창문은 자동으로 내려갔다. 그곳에는 아무도 없었고 경찰관이 \"안녕하세요\"라고 인사를 건네자 회사 담당자와 통화가 연결됐다. \n \n'웨이모' 차량 운전석에 운전자가 없는 모습. [이미지제공=피닉스경찰국] \n \n'웨이모' 차량 운전석에 운전자가 없는 모습. [이미지제공=피닉스경찰국] \n경찰관은 \"차량이 반대 차선으로 주행했다\"고 말하자 담당자는 \"바로 확인하겠다\"고 답했다. 경찰관은 \"(차량이) 공사 구역을 지나다가 반대 차선으로 갔다. 위험한 상황이었다\"고 덧붙였다. 이후 담당자가 직접 현장에 출동해 문제를 해결한 것으로 알려졌다. \n \n웨이모 회사 측은 이 차량이 '불일치한 공사 표지판'을 마주쳐서 반대 차선으로 들어선 것이라고 밝혔다. 또 경찰이 차를 세우기 전까지 약 30초간 도로를 역주행했다고 전했다. 다행히 승객은 탑승하지 않았고, 주변에 다른 차량도 없어 사고로 이어지진 않았다. 경찰은 \"컴퓨터에 벌금을 부과할 수 없었기 때문에 추가 조치 없이 사건이 끝났다\"는 입장을 내놨다. \n \n피닉스는 미국에서 자율주행차량의 운행을 허용한 몇 안 되는 도시 중 하나다. 그러나 크고 작은 사고들이 이어지면서 자율주행차량의 안전에 대한 우려의 목소리가 커지고 있다. \n \n불타고 있는 웨이모 차량. [이미지출처=엑스(X·트위터)] \n \n불타고 있는 웨이모 차량. [이미지출처=엑스(X·트위터)] \n한편 자율주행은 인공지능(AI)과 센서 기술의 결합으로 운전자의 개입 없이 스스로 주행하도록 하는 기능을 의미한다. 운전자의 운전 피로도를 낮춰준다는 이점도 있지만 안전 문제 또한 내포하고 있어 갑론을박이 이어지고 있다. \n \n세계 최초로 24시간 자율주행 택시를 허용했던 미국 캘리포니아주 샌프란시스코에서도 인명사고가 잇따르고 있다. 지난해 10월 샌프란시스코 시내에서는 한 여성이 로보택시(자율주행 택시) 아래에 깔려 중상을 입는 사고가 발생했다. 소방대가 현장에 도착했을 때 여성은 로보택시 차량 아래에 끼어 있는 상태였고 소방대는 구조 장비를 이용해 차를 들어 올린 뒤 여성을 끌어냈다. \n \n아울러 지난 2월에는 샌프란시스코에서 한 군중이 웨이모에 불을 지르는 사건이 발생하기도 했다. 외신은 해당 사건을 두고 자율주행차 택시 인명사고가 잇따르면서 시민들의 반감이 커진 탓이라고 분석했다."},
@@ -299,11 +299,11 @@ async function generateArticle(url) {
 		let response = await gemini(prompt);
 
 		if (response == null) {
-			console.log("Gemini returned null. Stop generation.");
+			console.log("🤖 Gemini returned null. Stopping generation.");
 			return;
 		}
 
-		console.log("Generating Image...");
+		console.log("🤖 Generating Image...");
 		let img = await generateImage(article);
 
 		/* Clean up response */
@@ -324,13 +324,13 @@ async function generateArticle(url) {
 		let date = Date.now();
 		let id = getID(date);
 
-		console.log("Querying DB...");
+		console.log("🤖 Querying DB...");
 
 		let query = "INSERT INTO news (id, date, title, article, img) VALUES ($1, $2, $3, $4, $5)";
 		let res = await queryDB(query, [id, date, title, data, img]);
 
-		console.log(id);
-		console.log(title);
+		console.log("🤖 ID:    " + id);
+		console.log("🤖 Title: " + title);
 
 		/* Generate Comments */
 		let comments = Math.floor(Math.random() * 3) + 2;
@@ -349,9 +349,9 @@ async function generateArticle(url) {
 			}, waitTime);
 		}
 
-		console.log("Uploaded to DB!");
+		console.log("🤖 Uploaded to DB!");
 	} catch (e) {
-		console.log("Error in generateArticle()");
+		console.log("🤖 Error in generateArticle()");
 		console.log(e);
 		return;
 	}
@@ -447,7 +447,7 @@ async function getFlickrImage(query, size = 10) {
 
 		return image.url_l;
 	} catch (e) {
-		console.log("Error in getFlickrImage()");
+		console.log("🏞️ Error in getFlickrImage()");
 		console.log(e);
 		return null;
 	}
@@ -506,8 +506,8 @@ async function updateTopics() {
 		try {
 			news = JSON.parse(res);
 		} catch (e) {
-			console.log(res);
 			console.log("🔍 Error parsing Gemini result.");
+			console.log(res);
 			return;
 		}
 	}
@@ -612,7 +612,7 @@ async function queryDB(query, params) {
 		let response = await client.query(query, params);
 		return response;
 	} catch (e) {
-		console.log("Error in queryDB()");
+		console.log("💾 Error in queryDB()");
 		console.log(e);
 	}
 }
@@ -702,7 +702,7 @@ async function gemini(prompt, retry = 0) {
 		const response = result.response;
 		return response.text();
 	} catch (e) {
-		console.log("Error in gemini()");
+		console.log("🤷‍♂️ Error in gemini()");
 		console.log(e);
 		return null;
 	}
