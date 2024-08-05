@@ -60,7 +60,7 @@ const garbage = process.env.DAILY_GARBAGE;
 let speech = [];
 
 app.post('/daily', async (req, res) => {
-	let date = new Date().toISOString().split('T')[0];
+	let date = new Date().toLocaleDateString('ja-jp');
 	let data = req.body.data;
 
 	if(data == undefined) {

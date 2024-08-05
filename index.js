@@ -258,8 +258,22 @@ let topics = [];
 async function start() {
 	console.log("Starting Automation...");
 
+	await updateTopics();
+	await new Promise(resolve => setTimeout(resolve, 5000));
+
+	await updateTopics();
+	await new Promise(resolve => setTimeout(resolve, 5000));
+
+	await updateTopics();
+	await new Promise(resolve => setTimeout(resolve, 5000));
+
+	await updateTopics();
+	await new Promise(resolve => setTimeout(resolve, 5000));
+
+	await updateTopics();
+
 	setIntervalAndExecute(updateTopics, 1000 * 60 * 10);
-	setIntervalAndExecute(createNews, 1000 * 60 * 2, 10000);
+	setIntervalAndExecute(createNews, 1000 * 60 * 3, 10000);
 }
 
 async function createNews() {
@@ -449,6 +463,10 @@ async function getFlickrImage(query, size = 10) {
 	}
 }
 
+// 1,500 RPD
+//  62.5 RPH
+//  1.04 RPM
+
 async function updateTopics() {
 	topics = [];
 	
@@ -457,17 +475,61 @@ async function updateTopics() {
 
 	// Random order
 	news = news.sort(() => Math.random() - 0.5);
-	
-	// Gemini to remove political news
-	let list = JSON.stringify(news);
-	let used = JSON.stringify(previousNews);
 
-	let prompt = [
-		{text: `input: 다음 뉴스 리스트중 헤드라인에 걸릴 뉴스들을 찾고싶어. 정치적인 뉴스나 특정 인물의 이름이 언급된 뉴스 기사는 제외해줘. JSON 으로 결과만 줘.\n\n${list}\n\n다음은 이전에 이미 사용한 뉴스 기사야. 아래 뉴스와 동일한 주제를 다루는 뉴스는 포함하지 말아줘.\n${used}`},
+	// Remove duplicate news
+	for(let i = 0; i < news.length; i++) {
+		for(let j = 0; j < previousNews.length; j++) {
+			if(news[i].title == previousNews[j].title) {
+				news.splice(i, 1);
+				i--;
+				break;
+			}
+		}
+	}
+
+	if (news.length == 0) {
+		console.log("No new news.");
+		return;
+	}
+	
+	// Convert news to JSON
+	let list = JSON.stringify(news);
+
+	// Convert previous news to list
+	let used = "";
+	for (let i = 0; i < previousNews.length; i++) {
+		used += previousNews[i].title + "\n";
+	}
+
+	// Remove news with same topic
+	if(used != "") {
+		let prompt = [
+			{ text: `input: JSON 리스트 A 와 리스트 B가 있어. A에서 B와 동일한 주제를 다루는 항목을 제거해줘. 부가적인 설명 없이 JSON으로 결과만 줘.\n\nA)\n${list}\n\nB)\n${used}` },
+			{ text: "output: "}
+		]
+	
+		let res = await gemini(prompt);
+	
+		res = res.replaceAll('```', '');
+		res = res.replaceAll('json', '');
+	
+		try {
+			news = JSON.parse(res);
+		} catch (e) {
+			console.log(res);
+			console.log("Error parsing Gemini result.");
+			return;
+		}
+	}
+
+	list = JSON.stringify(news);
+
+	prompt = [
+		{ text: `input: 다음 뉴스 리스트중 헤드라인에 걸릴 뉴스를 찾고싶어. 최대 4개 까지 골라봐. 정치적인 뉴스나 특정 인물의 이름이 언급된 뉴스 기사는 제외해줘. JSON 으로 결과만 줘.\n\n${list}` },
 		{ text: "output: " },
 	];
-	
-	let res = await gemini(prompt);
+
+	res = await gemini(prompt);
 
 	res = res.replaceAll('```', '');
 	res = res.replaceAll('json', '');
@@ -477,6 +539,7 @@ async function updateTopics() {
 		topics = topics.concat(res);
 	} catch (e) {
 		console.log("Error parsing Gemini result.");
+		return;
 	}
 
 	console.log("Currently have " + topics.length + " topics!");
