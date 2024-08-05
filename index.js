@@ -329,8 +329,8 @@ async function generateArticle(url) {
 		let query = "INSERT INTO news (id, date, title, article, img) VALUES ($1, $2, $3, $4, $5)";
 		let res = await queryDB(query, [id, date, title, data, img]);
 
-		console.log("🤖 ID:    " + id);
-		console.log("🤖 Title: " + title);
+		console.log("💘 ID:    " + id);
+		console.log("💘 Title: " + title);
 
 		/* Generate Comments */
 		let comments = Math.floor(Math.random() * 3) + 2;
