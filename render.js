@@ -216,6 +216,8 @@ app.get('*', function(req, res) {
 });
 
 app.listen(80, async () => {
+	process.env.TZ = 'Asia/Seoul';
+
 	console.log('Server is running on port 80');
 
 	await initSpeech();
