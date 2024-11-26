@@ -325,6 +325,9 @@ async function generateArticle(url) {
 		let title = response[0];
 		title = title.replaceAll('#', '');
 		title = title.replaceAll('*', '');
+		title = title.replaceAll('뉴스 제목', '');
+		title = title.replaceAll('뉴스제목', '');
+		title = title.replaceAll(':', '');
 		title = title.trim();
 
 		response = response.slice(1);
