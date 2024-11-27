@@ -173,7 +173,12 @@ app.get('/article/:id', async (req, res) => {
 		}
 
 		// Load Article
-		data = data.replaceAll('${title}', response.rows[0].title);
+		let title = response.rows[0].title;
+		if (title.split(':').length > 1) {
+			title = title.split(':')[1];
+		}
+
+		data = data.replaceAll('${title}', title);
 		data = data.replaceAll('${date}', response.rows[0].date);
 		data = data.replaceAll('${url}', 'https://newsgaki.com/article/' + response.rows[0].id);
 		data = data.replaceAll('${img}', response.rows[0].img);
@@ -181,6 +186,9 @@ app.get('/article/:id', async (req, res) => {
 		data = data.replaceAll('${dislike_count}', response.rows[0].dislikes);
 
 		let article = response.rows[0].article;
+		if (article.split(':').length > 1) {
+			article = article.split(':')[1];
+		}
 		
 		article = article.replaceAll('    ', ' ');
 		article = article.replaceAll('   ', ' ');
