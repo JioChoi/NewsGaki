@@ -41,6 +41,8 @@ client.connect(err => {
 	}
 });
 
+let articleLog = [];
+
 // 1500 requests per day.
 // 60 requests per hour
 // 1 request per minute
@@ -76,20 +78,43 @@ app.get('/api/article/:id', async (req, res) => {
 		res.status(404).send("Not Found");
 		return;
 	}
+
+	let ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+	let name = crypto.createHash('md5').update(ip).digest('hex');
+	name = name.slice(0, 8);
+
+	if (!articleLog.includes(`${name}|${id}`)) {
+		articleLog.push(`${name}|${id}`);
+		await queryDB("UPDATE news SET view = view + 1 WHERE id = $1", [id]);
+
+		if (articleLog.length > 1000) {
+			articleLog.shift();
+		}
+	}
+
 	res.send(response.rows[0]);
 });
 
 app.post('/api/list', async (req, res) => {
 	let start = req.body.start;
 	let size = req.body.size;
+	let order = req.body.order;
 
-	if (start == undefined || size == undefined || isNaN(start) || isNaN(size) || start < 0 || size < 0 || size > 20) {
+	if (start == undefined || size == undefined || isNaN(start) || isNaN(size) || start < 0 || size < 0 || size > 20 || (order != "new" && order != "popular" && order != "list")) {
 		res.status(400).send("Bad Request");
 		return;
 	}
 
 	let query = "SELECT * FROM news ORDER BY date DESC OFFSET $1 LIMIT $2";
-	let response = await queryDB(query, [start, size]);
+	let data = [start, size];
+
+	if (order == "popular") {
+		let dateLimit = Date.now() - 1000 * 60 * 60 * 12;
+		query = "SELECT * FROM news WHERE date > $1 ORDER BY view DESC OFFSET $2 LIMIT $3";
+		data = [dateLimit, start, size];
+	}
+
+	let response = await queryDB(query, data);
 
 	res.send(response.rows);
 });
