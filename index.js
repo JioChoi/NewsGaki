@@ -100,7 +100,7 @@ app.post('/api/list', async (req, res) => {
 	let size = req.body.size;
 	let order = req.body.order;
 
-	if (start == undefined || size == undefined || isNaN(start) || isNaN(size) || start < 0 || size < 0 || size > 20 || (order != "new" && order != "popular" && order != "list")) {
+	if (start == undefined || size == undefined || isNaN(start) || isNaN(size) || start < 0 || size < 0 || size > 20) {
 		res.status(400).send("Bad Request");
 		return;
 	}
