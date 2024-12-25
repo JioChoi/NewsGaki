@@ -4,20 +4,64 @@ let i = 0;
 
 let data = [];
 
-window.addEventListener('DOMContentLoaded', async function() {
+window.addEventListener('load', async () => {
 	document.body.classList.add('noscroll');
-	let [text, day, encrypted] = await getDaily();
+	let [text, day, encrypted, newdata] = await getDaily();
 
-	document.getElementById('day').textContent = `${day}일차`;
-
-	if (text == "" || text == undefined) {
-		document.body.classList.remove('noscroll');
-		document.getElementById('main_loading').style.display = 'none';
-		return;
+	if (newdata == undefined) {
+		document.getElementById("checkmsg").style.display = 'none';
 	}
 
-	console.log(text);
+	document.body.classList.remove('noscroll');
+	document.getElementById('main_loading').style.display = 'none';
+});
+
+function spawnBgHeart() {
+	let heart = document.createElement('span');
+	heart.innerHTML = '♡';
+
+	let size = Math.floor(Math.random() * 20 + 15);
+	let x = Math.random() * 100;
+
+	heart.style.left = `${x}%`;
+	heart.style.fontSize = `${size}px`;
+
+	document.getElementById('loading_bg').appendChild(heart);
+}
+
+async function sakiIn() {
+	document.getElementById('loadbar').style.backgroundImage = 'linear-gradient(90deg, #FF5782 0%, #ECECEC 0)'
+	document.getElementById('daily_loading').style.display = 'flex';
+	document.body.classList.add('noscroll');
+
+	let loadstart = new Date().getTime();
+
+	let [text, day, encrypted] = await getDaily();
+
+	document.getElementById("checkmsg").style.display = 'none';
+	document.getElementById('day').textContent = `${day}일차`;
+
 	await loadAssets();
+
+	if (new Date().getTime() - loadstart < 1000) {
+		await new Promise((resolve, reject) => {
+			setTimeout(() => {
+				resolve();
+			}, 1000 - (new Date().getTime() - loadstart));
+		});
+	}
+
+	document.getElementById('daily_loading').style.opacity = 0;
+	document.getElementById('daily_loading').style.animation = 'loadinghide 0.3s ease-out';
+	await new Promise((resolve, reject) => {
+		setTimeout(() => {
+			document.getElementById('daily_loading').style.display = 'none';
+			document.getElementById('daily_loading').style.animation = 'loadingshow 0.5s ease-out';
+			document.getElementById('daily_loading').style.opacity = 1;
+			document.getElementById('loadbar').style.backgroundImage = 'linear-gradient(90deg, #FF5782 0%, #ECECEC 0)'
+			resolve();
+		}, 300);
+	});
 
 	// Loaded
 	document.getElementById('daily').style.display = 'flex';
@@ -25,7 +69,7 @@ window.addEventListener('DOMContentLoaded', async function() {
 	document.getElementById('saki').style.display = 'flex';
 
 	document.getElementById('daily').classList.add('in');
-
+	
 	setTimeout(() => {
 		document.getElementById('daily').style.display = 'none';
 		document.getElementById('saki_panel').classList.add('in');
@@ -61,28 +105,39 @@ window.addEventListener('DOMContentLoaded', async function() {
 			}
 		}
 	}, 1000 / 50);
-});
+}
 
 function sakiOut() {
 	document.getElementById('msg').classList.remove('in');
 
 	setTimeout(() => {
+		// Remove saki character
 		document.getElementById('saki_panel').className = "out";
 
 		setTimeout(() => {
+			// Remove saki msg box
 			document.getElementById('saki').style.opacity = 0;
 			setTimeout(() => {
+				// Everything is gone, now reset
 				document.getElementById('saki').style.display = 'none';
 				document.body.classList.remove('noscroll');
+
+				document.getElementById('saki_panel').classList.remove('out');
+				document.getElementById('saki').style.opacity = 1;
+
+				// Unload assets
+				for(let i = 0; i < frames; i++) {
+					data[i].src = "";
+					data[i] = null;
+				}
+				data = [];
 			}, 500);
 		}, 300);
 	}, 400);
 }
 
-async function waitInput () {
+async function waitInput (controller = new AbortController()) {
 	return new Promise((resolve, reject) => {
-		const controller = new AbortController();
-
 		window.addEventListener('click', () => {
 			controller.abort();
 			resolve();
@@ -107,17 +162,38 @@ async function typeWriter(text, speed) {
 	let msg = document.getElementById('msg');
 	msg.textContent = "";
 
-	return new Promise((resolve, reject) => {
-		const interval = setInterval(() => {
+	let interval;
+
+	await new Promise((resolve, reject) => {
+		setTimeout(() => {
+			resolve();
+		}, 100);
+	});
+
+	return new Promise(async (resolve, reject) => {
+		const controller = new AbortController();
+
+		interval = setInterval(() => {
 			if (i < text.length) {
 				msg.textContent += text.charAt(i);
 				i++;
 			} else {
+				controller.abort();
 				msg.innerHTML += "<span class='arrowDown'> ⏷</span>";
 				clearInterval(interval);
 				resolve();
 			}
 		}, speed);
+
+		await waitInput(controller);
+		clearInterval(interval);
+		msg.innerHTML = text + "<span class='arrowDown'> ⏷</span>";
+		await new Promise((resolve, reject) => {
+			setTimeout(() => {
+				resolve();
+			}, 100);
+		});
+		resolve();
 	});
 }
 
@@ -132,6 +208,8 @@ async function loadAssets() {
 
 		img.onload = () => {
 			loaded++;
+			let percent = Math.floor(Math.pow(loaded / frames, 2) * 100);
+			document.getElementById('loadbar').style.backgroundImage = `linear-gradient(90deg, #FF5782 ${percent}%, #ECECEC 0)`;
 		}
 	}
 
@@ -166,5 +244,5 @@ async function getDaily() {
 		return "";
 	}
 
-	return [response.text, response.day + 1, response.encrypted];
+	return [response.text, response.day + 1, response.encrypted, response.newdata];
 }

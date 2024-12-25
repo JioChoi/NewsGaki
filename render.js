@@ -14,6 +14,8 @@ const { type } = require('os');
 let sitemap;
 let maxDaily = 0;
 
+let articleLog = [];
+
 const client = new pg.Pool({
 	user: process.env.DB_USER,
 	host: process.env.DB_HOST,
@@ -72,7 +74,7 @@ app.post('/daily', async (req, res) => {
 		let encrypted = encode({ date: date, today: 0, garbage: garbage });
 		let text = speech[0];
 
-		res.send({ encrypted: encrypted, text: text, day: 0 });
+		res.send({ encrypted: encrypted, text: text, day: 0, newdata: true });
 		return;
 	}
 
@@ -96,9 +98,15 @@ app.post('/daily', async (req, res) => {
 				maxDaily = decrypted.today;
 			}
 
-			res.send({ encrypted: encrypted, text: text, day: decrypted.today });
+			res.send({ encrypted: encrypted, text: text, day: decrypted.today, newdata: true });
 			return;
 		}
+	}
+	else {
+		let text = speech[decrypted.today];
+
+		res.send({ encrypted: data, text: text, day: decrypted.today });
+		return;
 	}
 
 	res.send('{}');
@@ -170,6 +178,19 @@ app.get('/article/:id', async (req, res) => {
 		if (!response || response.rows.length == 0) {
 			res.redirect('/');
 			return;
+		}
+
+		let ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+		let name = crypto.createHash('md5').update(ip).digest('hex');
+		name = name.slice(0, 8);
+		
+		if (!articleLog.includes(`${name}|${req.params.id}`)) {
+			articleLog.push(`${name}|${req.params.id}`);
+			await queryDB("UPDATE news SET view = view + 1 WHERE id = $1", [req.params.id]);
+	
+			if (articleLog.length > 1000) {
+				articleLog.shift();
+			}
 		}
 
 		// Load Article

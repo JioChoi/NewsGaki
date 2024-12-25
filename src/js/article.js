@@ -6,7 +6,7 @@ window.onbeforeunload = function () {
 
 document.addEventListener('DOMContentLoaded', async () => {
 	// Rendom comment
-	if (Math.random() * 100 == 1) {
+	if (Math.random() * 50 == 1) {
 		document.getElementById('edit').value = "히잡♡"
 	}
 

@@ -5,6 +5,12 @@
 
 /* @import url("https://cdn.jsdelivr.net/npm/font-applesdgothicneo@1.0.3/css/all.min.css"); */
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bungee&display=swap');
+
+@font-face {
+	font-family: 'Code2000';
+	src: url('/assets/CODE2000.ttf') format('truetype');
+}
 
 /*
 	300
