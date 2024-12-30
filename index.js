@@ -843,3 +843,7 @@ async function gemini(prompt, retry = 0) {
 async function delay(ms) {
 	return new Promise(resolve => setTimeout(resolve, ms));
 }
+
+process.on('uncaughtException', function(err) {
+	console.log('Caught exception: ' + err);
+});
