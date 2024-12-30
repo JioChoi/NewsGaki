@@ -195,43 +195,69 @@ app.get('/article/:id', async (req, res) => {
 
 		// Load Article
 		let title = response.rows[0].title;
+
+		// Remove weird formattings from title
 		if (title.split(':').length > 1) {
 			title = title.split(':')[1];
+		}
+		title = title.replaceAll('*', '');
+
+		// Remove weird formattings from article
+		let image = response.rows[0].img;
+		let multiimage = false;
+		try {
+			image = JSON.parse(image);
+			data = data.replaceAll('${img}', image[0]);
+			multiimage = true;
+		} catch (e) {
+			image = image.replaceAll('{', '');
+			image = image.replaceAll('}', '');
+			image = image.replaceAll('"', '');
+			data = data.replaceAll('${img}', image);
 		}
 
 		data = data.replaceAll('${title}', title);
 		data = data.replaceAll('${date}', response.rows[0].date);
 		data = data.replaceAll('${url}', 'https://newsgaki.com/article/' + response.rows[0].id);
-		data = data.replaceAll('${img}', response.rows[0].img);
 		data = data.replaceAll('${like_count}', response.rows[0].likes);
 		data = data.replaceAll('${dislike_count}', response.rows[0].dislikes);
 
+		// Remove weird formattings from article
 		let article = response.rows[0].article;
 		if (article.split(':').length > 1) {
 			article = article.split(':')[1];
 		}
-		
-		article = article.replaceAll('    ', ' ');
-		article = article.replaceAll('   ', ' ');
+
+		// Remove weird characters
+		article = article.trim();
 		article = article.replaceAll('  ', ' ');
-		
-		article = article.replaceAll('!', '♡');
-		article = article.replaceAll('. ', '♡ ');
-		article = article.replaceAll('.♡', '♡');
-		article = article.replaceAll(' ♡', '♡');
-		article = article.replaceAll('♡♡', '♡');
-		article = article.replaceAll('♡♡♡', '♡');
-		article = article.replaceAll('♡.', '♡');
-		article = article.replaceAll('.♡', '♡');
-		article = article.replaceAll('허허, ', '');
-		data = data.replaceAll('${description}', article.replaceAll('\n', ' '));
+		article = article.replaceAll('   ', ' ');
+		article = article.replaceAll('    ', ' ');
+
+		data = data.replaceAll('${description}', article.replaceAll('\n', ' ').replaceAll('*', ''));
 
 		article = article.replaceAll('♡', '<span class="hearts" onclick="heart(this)">&#9825;</span>');
 
 		article = article.split('\n');
 		let content = '';
+
+		let headline = 0;
+		let imageIndex = 1;
+
 		for (let line of article) {
-			content += `<p>${line}</p>`;
+			if(line[0] == '*') {
+				headline++;
+
+				if (headline % 2 == 0 && imageIndex < image.length && multiimage) {
+					content += `<img src="${image[imageIndex]}" style="margin-top:50px">\n<h4>(기사 속 사건과 관련 없음)</h4>`;
+					imageIndex++;
+				}
+
+				content += `<h6>${line.replaceAll('*', '')}</h6>`;
+			}
+			else {
+				content += `<p>${line}</p>`;
+			}
 		}
 
 		data = data.replace('${contents}', content);
@@ -348,3 +374,7 @@ function initSpeech() {
 	speech = decode(data);
 	speech = speech.data;
 }
+
+process.on('uncaughtException', function(err) {
+	console.log('Caught exception: ' + err);
+});

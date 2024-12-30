@@ -115,6 +115,15 @@ function createItem(title_text, date_text, id, comment_num, image) {
 	let container = document.createElement('div');
 
 	let img = document.createElement('img');
+
+	try {
+		image = JSON.parse(image)[0];
+	} catch (e) {
+		image = image.replaceAll('{', '');
+		image = image.replaceAll('}', '');
+		image = image.replaceAll('"', '');
+	}
+
 	img.src = image;
 	item.appendChild(img);
 

@@ -481,6 +481,7 @@ body {
 	margin: 0 15px;
 
 	border-bottom: 1px solid #f2f2f2;
+	align-items: center;
 	/* border-bottom: 1px solid transparent; */
 	/* border-image: linear-gradient(to right, transparent calc(25% + 8px), #f2f2f2 0%);
     border-image-slice: 1; */
@@ -516,7 +517,7 @@ body {
 .article img {
 	/* width: 25%;
 	min-width: 25%; */
-	height: 65px;
+	height: 61px;
 	aspect-ratio: 3/2;
 	object-fit: cover;
 	border-radius: 6px;
@@ -538,6 +539,8 @@ body {
 	-webkit-line-clamp: 2; /* number of lines to show */
 			line-clamp: 2; 
 	-webkit-box-orient: vertical;
+
+	height: 42px;
 }
 
 .article h3 {
@@ -685,6 +688,16 @@ body {
 	font-weight: 400;
 	color: #939393;
 	margin-left: 15px;
+}
+
+#content h6 {
+	font-size: 18px;
+	font-weight: 600;
+	margin-left: 15px;
+	margin-top: 50px;
+	line-height: 1.55;
+
+	margin-bottom: 8px;
 }
 
 #content strong {
