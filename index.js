@@ -655,6 +655,10 @@ async function getNewsFrom(url, minutes) {
 		url = url.trim();
 		preview = preview.trim();
 
+		if(title.includes('참사') || title.includes('항공') || preview.includes('참사') || preview.includes('항공')) {
+			continue;
+		}
+
 		news.push({
 			title: title,
 			url: url,
