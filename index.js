@@ -285,7 +285,7 @@ async function start() {
 	console.log("🤖 Starting Automation...");
 
 	setIntervalAndExecute(updateTopics, 1000 * 60 * 10);
-	setIntervalAndExecute(createNews, 1000 * 60 * 2, 10000);
+	setIntervalAndExecute(createNews, 1000 * 60 * 3, 10000);
 }
 
 async function createNews() {
@@ -518,6 +518,9 @@ async function updateTopics() {
 		}
 	}
 
+	// Only keep news with https://n.news.naver.com URL
+	news = news.filter(x => x.url.includes('https://n.news.naver.com'));
+
 	if (news.length < 3) {
 		console.log("🔍 No new news.");
 		return;
@@ -530,26 +533,33 @@ async function updateTopics() {
 	let previousnews_json = JSON.stringify(previousNews.map(({title, preview}) => ({title, preview})));
 
 	// Remove news with same topic
-	if(previousNews.length > 0) {
-		let prompt = [
-			{text: "JSON 리스트 A 와 리스트 B가 있어. A에서 B와 동일한 주제를 다루는 항목을 제거해줘. 부가적인 설명 없이 JSON으로 결과만 줘."},
-			{text: `input: **A**\n${news_json}\n\n**B**\n${previousnews_json}`},
-			{text: "output: "},		
-		]
+	// if(previousNews.length > 0) {
+	// 	let prompt = [
+	// 		{text: "JSON 리스트 A 와 리스트 B가 있어. A에서 B와 동일한 주제를 다루는 항목을 제거해줘. 부가적인 설명 없이 JSON으로 결과만 줘."},
+	// 		{text: `input: **A**\n${news_json}\n\n**B**\n${previousnews_json}`},
+	// 		{text: "output: "},		
+	// 	]
 	
-		let res = await gemini(prompt);
+	// 	let res = await gemini(prompt);
 	
-		res = res.replaceAll('```', '');
-		res = res.replaceAll('json', '');
+	// 	res = res.replaceAll('```', '');
+	// 	res = res.replaceAll('json', '');
 	
-		try {
-			news_json = JSON.parse(res);
-		} catch (e) {
-			console.log("🔍 Error parsing Gemini result.");
-			console.log(res);
-			return;
-		}
-	}
+	// 	try {
+	// 		news_json = JSON.parse(res);
+	// 	} catch (e) {
+	// 		console.log("🔍 Error parsing Gemini result.");
+	// 		console.log(res);
+	// 		return;
+	// 	}
+	// }
+
+	console.log("--------------------");
+	console.log("Previous NEWS");
+	console.log(previousnews_json);
+	console.log("NEWS");
+	console.log(news_json);
+	console.log("--------------------");
 
 	prompt = [
 		{text: "당신은 뉴스 기사들의 화제성을 분석하고 순위를 매기는 전문가입니다. 제공되는 뉴스 기사 JSON 데이터에 대해 다음 기준들을 적용하여 화제성을 분석하고, 최상위 뉴스 기사들을 JSON 형식으로 반환하세요.\n\n**분석 기준:**\n\n1.  **제외 대상:**\n    *   인명 피해, 사망, 사고, 사건 관련 뉴스\n    *   연예인, 배우, 정치인, 특정 인물 관련 뉴스\n    *   특정 회사 제품을 직접적으로 다루는 뉴스 기사는 제외합니다.\n\n2. **순위 결정 및 결과:**\n   * 뉴스 기사들을 화제성 순으로 정렬하세요.\n   * 최상위 그룹에 속하는 뉴스 기사들만 선택하여 JSON 형식으로 반환하되, 같은 주제의 기사는 하나만 선택하세요.\n   * JSON 객체는 다음과 같은 키를 포함해야 합니다: \"title\", \"url\".\n   * 최대 세개까지 선택하세요\n\n"},
