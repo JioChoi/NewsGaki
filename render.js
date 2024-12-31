@@ -138,13 +138,30 @@ app.get('/maxdaily', (req, res) => {
 });
 
 app.get('/goodcomments', async (req, res) => {
-	let query = "SELECT * FROM comment WHERE comment != '허접♡' ORDER BY date DESC";
+	let query = "SELECT * FROM comment WHERE automated = false ORDER BY date DESC LIMIT 50";
 	let response = await queryDB(query, []);
 
 	// only comments
 	let buffer = "";
 
 	for (let comment of response.rows) {
+		let diff = Date.now() - comment.date;
+		let text = "";
+
+		if (diff < 1000 * 60) {
+			text = Math.floor(diff / 1000) + "초 전";
+		}
+		else if (diff < 1000 * 60 * 60) {
+			text = Math.floor(diff / (1000 * 60)) + "분 전";
+		}
+		else if (diff < 1000 * 60 * 60 * 24) {
+			text = Math.floor(diff / (1000 * 60 * 60)) + "시간 전";
+		}
+		else {
+			text = Math.floor(diff / (1000 * 60 * 60 * 24)) + "일 전";
+		}
+
+		buffer += `<p>${text}</p>`;
 		buffer += `<a href="/article/${comment.id}">${comment.comment}</a><br><br>`;
 	}
 
