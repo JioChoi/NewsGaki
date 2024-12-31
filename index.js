@@ -367,10 +367,10 @@ async function generateArticle(url) {
 
 			setTimeout(async () => {
 				let name = crypto.randomBytes(4).toString('hex');
-				let query = "INSERT INTO comment (id, name, comment, date) VALUES ($1, $2, $3, $4)";
+				let query = "INSERT INTO comment (id, name, comment, date, automated) VALUES ($1, $2, $3, $4, $5)";
 				let time = date + waitTime;
 
-				await queryDB(query, [id, name, "허접♡", time]);
+				await queryDB(query, [id, name, "허접♡", time, true]);
 
 				query = "UPDATE news SET comment = comment + 1 WHERE id = $1";
 				await queryDB(query, [id]);
@@ -562,7 +562,7 @@ async function updateTopics() {
 	console.log("--------------------");
 
 	prompt = [
-		{text: "당신은 뉴스 기사들의 화제성을 분석하고 순위를 매기는 전문가입니다. 제공되는 뉴스 기사 JSON 데이터에 대해 다음 기준들을 적용하여 화제성을 분석하고, 최상위 뉴스 기사들을 JSON 형식으로 반환하세요.\n\n**분석 기준:**\n\n1.  **제외 대상:**\n    *   인명 피해, 사망, 사고, 사건 관련 뉴스\n    *   연예인, 배우, 정치인, 특정 인물 관련 뉴스\n    *   특정 회사 제품을 직접적으로 다루는 뉴스 기사는 제외합니다.\n\n2. **순위 결정 및 결과:**\n   * 뉴스 기사들을 화제성 순으로 정렬하세요.\n   * 최상위 그룹에 속하는 뉴스 기사들만 선택하여 JSON 형식으로 반환하되, 같은 주제의 기사는 하나만 선택하세요.\n   * JSON 객체는 다음과 같은 키를 포함해야 합니다: \"title\", \"url\".\n   * 최대 세개까지 선택하세요\n\n"},
+		{text: "당신은 뉴스 기사들의 화제성을 분석하고 순위를 매기는 전문가입니다. 제공되는 뉴스 기사 JSON 데이터에 대해 다음 기준들을 적용하여 화제성을 분석하고, 최상위 뉴스 기사들을 JSON 형식으로 반환하세요.\n\n**분석 기준:**\n\n1.  **제외 대상:**\n    *   인명 피해, 사망, 사고, 참사 관련 뉴스\n    *   연예인, 배우, 정치인, 특정 인물 관련 뉴스\n    *   특정 회사 제품을 직접적으로 다루는 뉴스 기사는 제외합니다.\n\n2. **순위 결정 및 결과:**\n   * 뉴스 기사들을 화제성 순으로 정렬하세요.\n   * 최상위 그룹에 속하는 뉴스 기사들만 선택하여 JSON 형식으로 반환하되, 같은 주제의 기사는 하나만 선택하세요.\n   * JSON 객체는 다음과 같은 키를 포함해야 합니다: \"title\", \"url\".\n   * 최대 세개까지 선택하세요\n\n"},
 		{text: `input: ${news_json}`},
 		{text: "output: "},
 	];
@@ -591,26 +591,24 @@ async function updateTopics() {
 	previousNews = previousNews.slice(-20);
 }
 
+// const urls = [
+
+// 	"https://news.naver.com/breakingnews/section/101/259",
+// 	"https://news.naver.com/breakingnews/section/101/258",
+// 	"https://news.naver.com/breakingnews/section/101/260",
+// 	"https://news.naver.com/breakingnews/section/101/262",
+
+// ]
+
 const urls = [
-	"https://news.naver.com/breakingnews/section/101/259",
 	"https://news.naver.com/breakingnews/section/101/258",
-	"https://news.naver.com/breakingnews/section/101/261",
+	"https://news.naver.com/breakingnews/section/101/260",
 	"https://news.naver.com/breakingnews/section/101/262",
-	"https://news.naver.com/breakingnews/section/101/310",
-	"https://news.naver.com/breakingnews/section/101/263",
-	"https://news.naver.com/breakingnews/section/102/251",
-	"https://news.naver.com/breakingnews/section/102/252",
+	"https://news.naver.com/breakingnews/section/102/250",
 	"https://news.naver.com/breakingnews/section/103/241",
-	"https://news.naver.com/breakingnews/section/103/239",
-	"https://news.naver.com/breakingnews/section/105/731",
-	"https://news.naver.com/breakingnews/section/105/226",
-	"https://news.naver.com/breakingnews/section/105/227",
-	"https://news.naver.com/breakingnews/section/105/230",
-	"https://news.naver.com/breakingnews/section/105/732",
-	"https://news.naver.com/breakingnews/section/105/283",
-	"https://news.naver.com/breakingnews/section/105/228",
-	"https://news.naver.com/breakingnews/section/102/59b",
+	"https://news.naver.com/breakingnews/section/103/237",
 	"https://news.naver.com/breakingnews/section/103/248",
+	"https://news.naver.com/breakingnews/section/105/229",
 	"https://news.naver.com/breakingnews/section/104/231",
 	"https://news.naver.com/breakingnews/section/104/232",
 	"https://news.naver.com/breakingnews/section/104/233",
@@ -677,12 +675,15 @@ async function getNewsFrom(url, minutes) {
 	}
 }
 
+
 async function legacy_getAllNews() {
 	news = [];
 
 	for (let id of ids) {
 		await getNews(id);
 	}
+
+	await removeOldNews(10);
 }
 
 async function getNews(id) {
@@ -697,7 +698,7 @@ async function getNews(id) {
 			"searchId": ""
 		  }
 		},
-		"query": "query ($media_home_tab_news_all_8Key: String!, $media_home_tab_news_all_8Params: Object) {\n  media_home_tab_news_all_8: page(charonKey: $media_home_tab_news_all_8Key, charonParams: $media_home_tab_news_all_8Params) {\n      items {\n      title\n      thumbnail\n      pcLink\n      meta\n      __typename\n    }\n    __typename\n  }\n}\n"
+		"query": "query ($media_home_tab_news_all_8Key: String!, $media_home_tab_news_all_8Params: Object) {\n  media_home_tab_news_all_8: page(charonKey: $media_home_tab_news_all_8Key, charonParams: $media_home_tab_news_all_8Params) {\n      items {\n      title\n      thumbnail\n   pcLink\n      meta\n      __typename\n    }\n    __typename\n  }\n}\n"
 	  });
 	  
 	let config = {
@@ -707,13 +708,15 @@ async function getNews(id) {
 		headers: { 
 		  'Content-Type': 'application/json'
 		},
-		data : data
+		data : data   
 	};
 
 	let response = await axios(config);
 	let items = response.data.data.media_home_tab_news_all_8.items;
 
+
 	items.forEach(item => {
+		console.log(item);
 		news.push({
 			title: item.title,
 			url: item.pcLink,
